@@ -1,0 +1,49 @@
+﻿@page "/"
+
+@using Services;
+@using Models;
+@using Constants;
+
+@inject IMusic music
+@inject IJSRuntime js
+
+@if (melodies == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+        @foreach (var melody in melodies)
+        {
+            <div class="col-md-3">
+                <div class="card">
+                    <img class="card-img" src="@melody.ImageUrl"/>
+                    <h2>@melody.Title</h2>
+                    <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+}
+
+
+@code{
+    private IEnumerable<GetMelodyDTO>? melodies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        melodies = await music.GetMusicAsync();
+    }
+
+    public void SetCurrentMelody(Guid id)
+    {
+        CurrentPlaylist.MelodyList = melodies?.ToList();
+
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
+
+        CurrentPlaylist.CurrentMelody = id;
+    }
+}
