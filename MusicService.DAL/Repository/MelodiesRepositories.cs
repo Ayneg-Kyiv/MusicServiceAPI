@@ -10,7 +10,7 @@ using MusicService.Infrastructure.FileOperations;
 
 namespace MusicService.DAL.Repository
 {
-    public class MelodiesRepository( ApplicationDbContext _context,
+    public class MelodiesRepositories( ApplicationDbContext _context,
                                      IMapper _mapper,
                                      IWebHostEnvironment _environment) : IMelody
     {
