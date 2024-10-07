@@ -1,6 +1,5 @@
 ﻿using MusicService.Core.Models.Abstract;
 using MusicService.Core.Models.Connective;
-using System.Text.Json.Serialization;
 
 namespace MusicService.Core.Models
 {

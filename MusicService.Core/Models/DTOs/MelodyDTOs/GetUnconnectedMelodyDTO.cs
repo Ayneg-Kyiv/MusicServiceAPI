@@ -4,7 +4,8 @@
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
-        public int duration { get; set; }
+      
+        public int Duration { get; set; }
 
         public string ImageLocalPath { get; set; } = null!;
     }

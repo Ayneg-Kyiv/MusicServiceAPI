@@ -18,8 +18,8 @@ namespace MusicService.DAL
                     <IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
             });
 
-            services.AddScoped<IAuthor, AuthorsRepository>();
-            services.AddScoped<IMelody, MelodiesRepository>();
+            services.AddScoped<IAuthor, AuthorsRepositories>();
+            services.AddScoped<IMelody, MelodiesRepositories>();
 
             return services;
         }
