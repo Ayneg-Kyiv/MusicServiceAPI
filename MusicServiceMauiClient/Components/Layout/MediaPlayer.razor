@@ -3,68 +3,63 @@
 @inject IJSRuntime js
 
 <div class="player-control-panel">
-  
-    <h4 class="info melody-title">Very big name for my own melody</h4>
-    <h6 class="info author-name">author</h6>
-
-    <div class="media-bar progress-bar">
-        <div class="media-bar fill-bar">
+    <div class="image-panel ">
+        <img class="img-fluid active-melody" src="https://th.bing.com/th/id/R.bc2e7e3c4287ceb88e45002237d8050d?rik=gPwOCgxYSFCFfw&pid=ImgRaw&r=0" />
+    </div>
+    <div class="controls">
+        <div class="info">
+        <p class="melody-title">Very big name for my own melody</p>
+        <p class="author-name">author</p>
         </div>
-    </div>
 
-    <div class="time-table">
-        <span id="current-time-span">0:00</span>
-        <span id="target-time-span">3:20</span>
-    </div>
+        <div class="media-bar progress-bar">
+            <div class="media-bar fill-bar">
+            </div>
+        </div>
 
-    <div class="d-flex justify-content-around">
-        <button class="my-audio-control-button" @onclick="prevSong">
-            <img src="/img/prev.png" />
-        </button>
+        <div class="time-table">
+            <span id="current-time-span">0:00</span>
+            <span id="target-time-span">3:20</span>
+        </div>
 
-        <button class="my-audio-control-button" @onclick="pausePlay">
-            <img id="state-pic" src="/img/play.png" />
-        </button>
+        <div class="melody-control">
+            <button class="my-audio-control-button" @onclick="prevSong">
+                <img src="/img/prev.png" />
+            </button>
 
-        <button class="my-audio-control-button" @onclick="nextSong">
-            <img src="/img/next.png" />
-        </button>
+            <button class="my-audio-control-button" @onclick="pausePlay">
+                <img id="state-pic" src="/img/play.png" />
+            </button>
+
+            <button class="my-audio-control-button" @onclick="nextSong">
+                <img src="/img/next.png" />
+            </button>
+        </div>
     </div>
 </div>
 
-@code {
-    private void nextSong()
-    {
-        var id = CurrentPlaylist.NextMelody;
-
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
-
-        CurrentPlaylist.CurrentMelody = id;
-    }
-    private void prevSong()
-    {
-        var id = CurrentPlaylist.PrevMelody;
-
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
-
-        CurrentPlaylist.CurrentMelody = id;
-    }
-    private void pausePlay()
-    {
-        js.InvokeVoidAsync("changeState");
-    }
-}
-
 <style>
-
     .player-control-panel {
-        flex-basis: 15%;
+        padding-block: 0px;
+        padding-inline: 20%;
+        flex-basis: 10vh;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: center;
         background-color: floralwhite;
         opacity: 60%;
-        border-radius: 20px 20px 0px 0px;
+        border-radius: 10px 10px 0px 0px;
+    }
+    .image-panel{
+        flex-basis: 24%;
+        display: flex;
+        justify-content: center;
+        align-content: center
+    }
+    .controls{
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
     }
 
     .info {
@@ -104,9 +99,39 @@
         padding-inline: 20px;
     }
 
+    .melody-control{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding-inline: 20%;
+    }
+
     .my-audio-control-button {
         border: 0;
         background-color: inherit;
     }
 
 </style>
+
+@code {
+    private void nextSong()
+    {
+        var id = CurrentPlaylist.NextMelody;
+
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
+
+        CurrentPlaylist.CurrentMelody = id;
+    }
+    private void prevSong()
+    {
+        var id = CurrentPlaylist.PrevMelody;
+
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
+
+        CurrentPlaylist.CurrentMelody = id;
+    }
+    private void pausePlay()
+    {
+        js.InvokeVoidAsync("changeState");
+    }
+}

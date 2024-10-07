@@ -9,7 +9,9 @@
 
 @if (melodies == null)
 {
-    <p><em>Loading...</em></p>
+    <div class="container-fluid">
+        <p><em>Loading...</em></p>
+    </div>
 }
 else
 {
@@ -28,7 +30,6 @@ else
         </div>
     </div>
 }
-
 
 @code{
     private IEnumerable<GetMelodyDTO>? melodies;

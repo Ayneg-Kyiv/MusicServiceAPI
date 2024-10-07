@@ -3,28 +3,49 @@
 
 @inject IJSRuntime js
 
-<div class="page">
-    <div class="sidebar">
-        <div class="sidebar-nav">
+<div class="wrapper">
+    <div class="top-header">
+        <div class="navigation">
             <NavMenu />
         </div>
-        <MediaPlayer />
     </div>
 
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+    <div class ="main-content">
+         @Body
+    </div>
+ 
+
+    <MediaPlayer />
+
+    <div class="footer">
+        
+    </div>
 </div>
 
 <style>
-    .sidebar {
+    .wrapper{
+        width: 100vw;
+        height: 100vh;
+        min-height: 100vh;
+        margin: auto;
+        height: auto;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-content: center;
     }
 
-    .sidebar-nav {
-        flex: 1 1 auto;
+    .top-header{
+        flex-basis: 5vh;
     }
+
+    .main-content {
+        flex: 1 1 auto;
+        display: flex;
+    }
+
+    .footer{
+        flex-basis: 3vh;
+    }
+
 </style>
