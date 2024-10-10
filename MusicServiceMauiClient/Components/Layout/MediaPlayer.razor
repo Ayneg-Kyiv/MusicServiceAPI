@@ -3,34 +3,122 @@
 @inject IJSRuntime js
 
 <div class="player-control-panel">
-  
-    <h4 class="info melody-title">Very big name for my own melody</h4>
-    <h6 class="info author-name">author</h6>
+    <div class="image-panel ">
+        <img class="img-fluid active-melody" src="/img/placeholder.jpg" />
+    </div>
+    <div class="controls">
+        <div class="info">
+            <p class="info melody-title">Very big name for my own melody</p>
+            <p class="info author-name">author</p>
+        </div>
 
-    <div class="media-bar progress-bar">
-        <div class="media-bar fill-bar">
+        <div class="media-bar progress-bar">
+            <div class="media-bar fill-bar">
+            </div>
+        </div>
+
+        <div class="melody-control">
+            <span id="current-time-span">0:00</span>
+
+            <button class="my-audio-control-button" @onclick="prevSong">
+                <img src="/img/prev.png" />
+            </button>
+
+            <button class="my-audio-control-button" @onclick="pausePlay">
+                <img id="state-pic" src="/img/pause.png" />
+            </button>
+
+            <button class="my-audio-control-button" @onclick="nextSong">
+                <img src="/img/next.png" />
+            </button>
+
+            <span id="target-time-span">3:20</span>
         </div>
     </div>
-
-    <div class="time-table">
-        <span id="current-time-span">0:00</span>
-        <span id="target-time-span">3:20</span>
-    </div>
-
-    <div class="d-flex justify-content-around">
-        <button class="my-audio-control-button" @onclick="prevSong">
-            <img src="/img/prev.png" />
-        </button>
-
-        <button class="my-audio-control-button" @onclick="pausePlay">
-            <img id="state-pic" src="/img/play.png" />
-        </button>
-
-        <button class="my-audio-control-button" @onclick="nextSong">
-            <img src="/img/next.png" />
-        </button>
-    </div>
 </div>
+
+<style>
+    .player-control-panel {
+        visibility: hidden;
+        position: fixed;
+        bottom:0px;
+        left: 20%;
+        width: 60%;
+        align-self: center;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        background-color: silver;
+        opacity: 60%;
+        border-radius: 10px 10px 0px 0px;
+    }
+    .image-panel{
+        flex-basis: 14%;
+        padding: 8px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-content: center
+    }
+    .img-fluid{
+        border-radius: 10px;
+    }
+    .img-panel{
+        border-radius: 10px;
+    }
+    .controls{
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .info {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-block: 2px;
+    }
+
+    .melody-title {
+        margin-left: 10%;
+    }
+
+    .author-name {
+        margin-left: 20%;
+        font-style: italic;
+    }
+
+    .media-bar {
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    .progress-bar {
+        background-color: dimgray;
+        margin-inline: 2%;
+        margin-block: 2px;
+    }
+
+    .fill-bar {
+        position: absolute;
+        width: 0%;
+        background-color: yellow;  
+    }
+
+    .melody-control{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-inline: 10%;
+    }
+
+    .my-audio-control-button {
+        border: 0;
+        background-color: inherit;
+    }
+
+</style>
 
 @code {
     private void nextSong()
@@ -54,59 +142,3 @@
         js.InvokeVoidAsync("changeState");
     }
 }
-
-<style>
-
-    .player-control-panel {
-        flex-basis: 15%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        background-color: floralwhite;
-        opacity: 60%;
-        border-radius: 20px 20px 0px 0px;
-    }
-
-    .info {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .melody-title {
-        margin-left: 10%;
-    }
-
-    .author-name {
-        margin-left: 20%;
-        font-style: italic;
-    }
-
-    .media-bar {
-        height: 8px;
-        border-radius: 4px;
-    }
-
-    .progress-bar {
-        background-color: dimgray;
-        margin: 2%;
-    }
-
-    .fill-bar {
-        position: absolute;
-        width: 0%;
-        background-color: yellow;  
-    }
-
-    .time-table {
-        display: flex;
-        justify-content: space-between;
-        padding-inline: 20px;
-    }
-
-    .my-audio-control-button {
-        border: 0;
-        background-color: inherit;
-    }
-
-</style>
