@@ -17,7 +17,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MusicService.DAL.Repository
 {
-    public class AlbumRepositories(ApplicationDbContext _context, 
+    public class AlbumRepository(ApplicationDbContext _context, 
          IMapper _mapper,
          IWebHostEnvironment _env) : IAlbum
     {
