@@ -15,7 +15,7 @@
 }
 else
 {
-    <div class="container">
+    <div class="my-container">
         <div class="row">
         @foreach (var melody in melodies)
         {
@@ -30,6 +30,11 @@ else
         </div>
     </div>
 }
+<style>
+    .my-container{
+        display: flex;
+    }
+</style>
 
 @code{
     private IEnumerable<GetMelodyDTO>? melodies;
@@ -44,6 +49,7 @@ else
         CurrentPlaylist.MelodyList = melodies?.ToList();
 
         js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
+        js.InvokeVoidAsync("updateProgress");
 
         CurrentPlaylist.CurrentMelody = id;
     }
