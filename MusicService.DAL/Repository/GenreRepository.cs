@@ -6,15 +6,7 @@ using MusicService.Core.Models;
 using MusicService.Core.Models.DTOs;
 using MusicService.Core.Models.DTOs.GenreDTOs;
 using MusicService.DAL.Data;
-using MusicService.Core.Models.DTOs.AuthorDTOs;
-using MusicService.Core.Models.DTOs.GenreDTOs;
-using MusicService.DAL.Data;
-using MusicService.Infrastructure.FileOperations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace MusicService.DAL.Repository
 {

@@ -106,7 +106,7 @@ namespace MusicService.DAL.Repository
 
         public async Task<ResponseDTO> GetAlbumByIdAsync(Guid id)
         {
-            var album = await _context.Authors.FindAsync(id);
+            var album = await _context.Albums.FindAsync(id);
 
             if (album == null)
             {
@@ -174,7 +174,7 @@ namespace MusicService.DAL.Repository
                 currentAlbum.ImageLocalPath = nameAndPath.Item2;
             }
 
-            Response.Result = _mapper?.Map<GetAuthorDTO>(currentAlbum);
+            Response.Result = _mapper?.Map<GetAlbumDTO>(currentAlbum);
             return Response; throw new NotImplementedException();
         }
     }
