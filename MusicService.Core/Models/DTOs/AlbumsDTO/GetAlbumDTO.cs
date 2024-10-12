@@ -13,7 +13,7 @@ namespace MusicService.Core.Models.DTOs.AlbumsDTO
         public string ImageFileName { get; set; } = null!;
         public string? ImageUrl { get; set; }
 
-        public GetAuthorDTO Author { get; set; } = null!;
+        public GetUnconnectedAuthorDTO Author { get; set; } = null!;
         public IEnumerable<GetUnconnectedGenreDTO>? Genres { get; set; }
         public IEnumerable<GetUnconnectedMelodyDTO>? Melodies { get; set; }
 

@@ -16,7 +16,9 @@ namespace MusicService.Infrastructure.Mappers
         {
             CreateMap<CreateAuthorDTO, Author>();
             CreateMap<UpdateAuthorDTO, Author>();
-            CreateMap<Author, GetUnconnectedAuthorDTO>();
+            CreateMap<Author, GetUnconnectedAuthorDTO>()
+                .ForMember(dest => dest.ImageUrl,
+                options => options.MapFrom(src => $"https://{TunnelUrlData.Url}/Files/Authors/" + src.ImageFileName));
             CreateMap<Author, GetAuthorDTO>()
                 .ForMember(dest => dest.Melodies,
                 options => options.MapFrom(src => src.Melodies))
@@ -46,12 +48,16 @@ namespace MusicService.Infrastructure.Mappers
                 options => options.MapFrom(src => src.Author))
                 .ForMember(dest => dest.Melodies,
                 options => options.MapFrom(src => src.Melodies))
+                .ForMember(dest => dest.Genres,
+                options => options.MapFrom(src => src.Genres))
                 .ForMember(dest => dest.ImageUrl,
                 options => options.MapFrom(src => $"https://{TunnelUrlData.Url}/Files/Albums/" + src.ImageFileName));
 
             CreateMap<CreateMelodyDTO, Melody>();
             CreateMap<UpdateMelodyDTO, Melody>();
-            CreateMap<Melody, GetUnconnectedMelodyDTO>();
+            CreateMap<Melody, GetUnconnectedMelodyDTO>()
+                .ForMember(dest => dest.ImageUrl,
+                options => options.MapFrom(src => $"https://{TunnelUrlData.Url}/Files/Melodies/Pictures/" + src.ImageFileName));
             CreateMap<Melody, GetMelodyDTO>()
                 .ForMember(dest => dest.Author,
                 options => options.MapFrom(src => src.Author))
@@ -96,6 +102,10 @@ namespace MusicService.Infrastructure.Mappers
                 .ForMember(dest => dest.MelodyId,
                 options => options.MapFrom(src => src.ToId))
                 .ReverseMap();
+
+            /*CreateMap<AlbumMelody, GetConnectiveObject>()
+                .ForMember(dest => dest.Object,
+                options => options.ConvertUsing<Melody, GetUnconnectedMelodyDTO>(src=> src.Melody));*/
         }
     }
 }
