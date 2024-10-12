@@ -2,9 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MusicService.Core.Interfaces;
+using MusicService.Core.Interfaces.Connective;
 using MusicService.Core.Options;
 using MusicService.DAL.Data;
 using MusicService.DAL.Repository;
+using MusicService.DAL.Repository.Connective;
 
 namespace MusicService.DAL
 {
@@ -22,6 +24,11 @@ namespace MusicService.DAL
             services.AddScoped<IMelody, MelodiesRepository>();
             services.AddScoped<IGenre, GenreRepository>();
             services.AddScoped<IAlbum, AlbumRepository>();
+
+            services.AddScoped<IAlbumMelody, AlbumMelodyRepository>();
+            services.AddScoped<IGenreAlbum, GenreAlbumRepository>();
+            services.AddScoped<IGenreAuthor, GenreAuthorRepository>();
+            services.AddScoped<IGenreMelody, GenreMelodyRepository>();
 
             return services;
         }
