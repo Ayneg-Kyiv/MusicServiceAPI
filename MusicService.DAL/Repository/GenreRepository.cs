@@ -1,10 +1,20 @@
-﻿using AutoMapper;
+using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using MusicService.Core.Interfaces;
 using MusicService.Core.Models;
 using MusicService.Core.Models.DTOs;
 using MusicService.Core.Models.DTOs.GenreDTOs;
 using MusicService.DAL.Data;
+using MusicService.Core.Models.DTOs.AuthorDTOs;
+using MusicService.Core.Models.DTOs.GenreDTOs;
+using MusicService.DAL.Data;
+using MusicService.Infrastructure.FileOperations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace MusicService.DAL.Repository
 {
@@ -76,7 +86,7 @@ namespace MusicService.DAL.Repository
             return Response;
         }
 
-        public async Task<ResponseDTO> GetAllGenreByIdAsync(Guid id)
+        public async Task<ResponseDTO> GetGenreByIdAsync(Guid id)
         {
             var genre = await _context.Genres.FindAsync(id);
 
