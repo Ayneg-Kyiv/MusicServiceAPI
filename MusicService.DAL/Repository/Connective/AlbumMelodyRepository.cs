@@ -43,7 +43,7 @@ namespace MusicService.DAL.Repository.Connective
                 return Response;
             }
 
-            Response.Result = _mapper.Map<AlbumMelody>(result);
+            Response.Result = connective;
 
             return Response;
         }

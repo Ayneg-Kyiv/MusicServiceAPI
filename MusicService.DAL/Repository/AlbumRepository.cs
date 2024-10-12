@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MusicService.Core.Models.DTOs.AlbumsDTO;
+﻿using MusicService.Core.Models.DTOs.AlbumsDTO;
 using MusicService.Core.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using AutoMapper;
 using MusicService.DAL.Data;
 using MusicService.Core.Models;
 using MusicService.Core.Models.DTOs;
-using MusicService.Core.Models.DTOs.AuthorDTOs;
-using Microsoft.Extensions.Hosting;
 using MusicService.Infrastructure.FileOperations;
 using Microsoft.EntityFrameworkCore;
+using MusicService.Core.Models.DTOs.MelodyDTOs;
 
 namespace MusicService.DAL.Repository
 {
@@ -123,10 +117,24 @@ namespace MusicService.DAL.Repository
 
         public async Task<ResponseDTO> GetAllAlbumsAsync()
         {
-            IEnumerable<Album> albums = [.. _context.Albums.Include(a => a.Melodies)];
+            IEnumerable<Album> albums = [.. _context.Albums.Include(a => a.Author)];
 
-            Response.Result = await Task.FromResult<IEnumerable<GetAlbumDTO>>
+            var getAlbums = await Task.FromResult<IEnumerable<GetAlbumDTO>>
                             (_mapper.Map<IEnumerable<GetAlbumDTO>>(albums));
+
+            foreach (var album in getAlbums)
+            {
+                IEnumerable<Guid> guids = await _context.AlbumMelodies.Where(a => a.AlbumId == album.Id)
+                                                                      .Select(a => a.MelodyId)
+                                                                      .ToListAsync();
+
+                IEnumerable<GetUnconnectedMelodyDTO> melodies = _mapper.Map<IEnumerable<GetUnconnectedMelodyDTO>>
+                    (_context.Melodies.Where(m => guids.Contains(m.ID)).ToList());
+
+                album.Melodies = melodies;
+            }
+
+            Response.Result = getAlbums;
 
             return Response;
         }

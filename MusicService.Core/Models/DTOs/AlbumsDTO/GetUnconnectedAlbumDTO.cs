@@ -12,6 +12,6 @@ namespace MusicService.Core.Models.DTOs.AlbumsDTO
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
 
-        public string ImageLocalPath { get; set; } = null!;
+        public string ImageUrl { get; set; } = null!;
     }
 }
