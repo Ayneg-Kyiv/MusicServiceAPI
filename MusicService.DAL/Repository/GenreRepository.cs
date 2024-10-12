@@ -1,9 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using MusicService.Core.Interfaces;
 using MusicService.Core.Models;
 using MusicService.Core.Models.DTOs;
+using MusicService.Core.Models.DTOs.GenreDTOs;
+using MusicService.DAL.Data;
 using MusicService.Core.Models.DTOs.AuthorDTOs;
 using MusicService.Core.Models.DTOs.GenreDTOs;
 using MusicService.DAL.Data;
