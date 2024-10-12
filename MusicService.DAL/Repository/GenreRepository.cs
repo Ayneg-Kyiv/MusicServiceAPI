@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace MusicService.DAL.Repository
 {
-    public class GenreRepositories(ApplicationDbContext _context,
+    public class GenreRepository(ApplicationDbContext _context,
                                    IMapper _mapper
                                      ) : IGenre
     {
@@ -84,7 +84,7 @@ namespace MusicService.DAL.Repository
             return Response;
         }
 
-        public async Task<ResponseDTO> GetAllGenreByIdAsync(Guid id)
+        public async Task<ResponseDTO> GetGenreByIdAsync(Guid id)
         {
             var genre = await _context.Genres.FindAsync(id);
 
