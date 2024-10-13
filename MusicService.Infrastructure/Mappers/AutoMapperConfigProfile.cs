@@ -103,9 +103,7 @@ namespace MusicService.Infrastructure.Mappers
                 options => options.MapFrom(src => src.ToId))
                 .ReverseMap();
 
-            /*CreateMap<AlbumMelody, GetConnectiveObject>()
-                .ForMember(dest => dest.Object,
-                options => options.ConvertUsing<Melody, GetUnconnectedMelodyDTO>(src=> src.Melody));*/
+            CreateMap<AlbumMelody, GetConnectiveObject>();
         }
     }
 }

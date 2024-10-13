@@ -1,10 +1,11 @@
-﻿using MusicService.Core.Models.DTOs.IdentityDTOs;
+﻿using MusicService.Core.Models.DTOs;
+using MusicService.Core.Models.DTOs.IdentityDTOs;
 
 namespace MusicService.Core.Interfaces.Identity
 {
     public interface IAccount
     {
-        Task<bool> Register(Register register);
-        Task<bool> Login(Login login);
+        Task<ResponseDTO> Register(Register register);
+        Task<ResponseDTO> Login(Login login);
     }
 }
