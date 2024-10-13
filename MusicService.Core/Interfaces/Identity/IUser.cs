@@ -1,12 +1,13 @@
-﻿using MusicService.Core.Models.DTOs.IdentityDTOs;
+﻿using MusicService.Core.Models.DTOs;
+using MusicService.Core.Models.DTOs.IdentityDTOs;
 
 namespace MusicService.Core.Interfaces.Identity
 {
     public interface IUser
     {
-        Task<GetUserDTO> GetUserByEmail (string email);
-        Task<bool> UpdateUserInformation(UpdateUserInfo update);
-        Task<bool> DeleteUser(string email);
-        Task<bool> ChangeUserPassword(ChangePassword changePassword);
+        Task<ResponseDTO> GetUserByEmail (string email);
+        Task<ResponseDTO> UpdateUserInformation(UpdateUserInfo update);
+        Task<ResponseDTO> DeleteUser(string email);
+        Task<ResponseDTO> ChangeUserPassword(ChangePassword changePassword);
     }
 }

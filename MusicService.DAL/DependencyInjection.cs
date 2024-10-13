@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MusicService.Core.Interfaces;
@@ -28,6 +28,7 @@ namespace MusicService.DAL
             services.AddScoped<IAlbum, AlbumRepository>();
             services.AddScoped<IAdmin, AdminRepository>();
             services.AddScoped<IAccount, AccountRepository>();
+            services.AddScoped<IUser, UserRepository>();
 
             services.AddScoped<IAlbumMelody, AlbumMelodyRepository>();
             services.AddScoped<IGenreAlbum, GenreAlbumRepository>();
