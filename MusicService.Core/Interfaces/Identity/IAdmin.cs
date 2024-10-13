@@ -1,17 +1,18 @@
-﻿using MusicService.Core.Models.DTOs.IdentityDTOs;
+﻿using MusicService.Core.Models.DTOs;
+using MusicService.Core.Models.DTOs.IdentityDTOs;
 
 namespace MusicService.Core.Interfaces.Identity
 {
     public interface IAdmin
     {
-        Task<IEnumerable<GetUserDTO>> GetUsers();
-        Task<bool> CreateUser(Register register);
-        Task<bool> DeleteUserByEmail(string email);
-        Task<IEnumerable<GetRoleDTO>> GetRoles();
-        Task<bool> CreateRole(string roleName);
-        Task<bool> DeleteRoleById(string roleName);
-        Task<bool> ChangeUsersRole(ChangeRole changeRole);
-        Task<bool> UpdateAdminInfo( UpdateUserInfo update);
-        Task<bool> UpdateAdminPassword( ChangePassword changePassword);
+        Task<ResponseDTO> GetUsers();
+        Task<ResponseDTO> CreateUser(Register register);
+        Task<ResponseDTO> DeleteUserByEmail(string email);
+        Task<ResponseDTO> GetRoles();
+        Task<ResponseDTO> CreateRole(string roleName);
+        Task<ResponseDTO> DeleteRoleById(string roleId);
+        Task<ResponseDTO> ChangeUsersRole( ChangeRole changeRole);
+        Task<ResponseDTO> UpdateAdminInfo( UpdateUserInfo update);
+        Task<ResponseDTO> UpdateAdminPassword( ChangePassword changePassword);
     }
 }

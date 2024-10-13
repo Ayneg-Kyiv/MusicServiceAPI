@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MusicService.BLL.Commands;
 using MusicService.BLL.Queries;
 using MusicService.Core.Models.DTOs.AlbumsDTO;
-using MusicService.Core.Models.DTOs.GenreDTOs;
+
 namespace MusicService.API.Controllers
 {
     [Route("api/[controller]")]
