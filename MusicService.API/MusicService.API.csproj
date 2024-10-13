@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Files\Albums\" />
     <Folder Include="Files\Authors\" />
     <Folder Include="Files\Melodies\Audio\" />
   </ItemGroup>

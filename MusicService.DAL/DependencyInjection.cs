@@ -3,10 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MusicService.Core.Interfaces;
 using MusicService.Core.Interfaces.Connective;
+using MusicService.Core.Interfaces.Identity;
 using MusicService.Core.Options;
 using MusicService.DAL.Data;
 using MusicService.DAL.Repository;
 using MusicService.DAL.Repository.Connective;
+using MusicService.DAL.Repository.Identity;
 
 namespace MusicService.DAL
 {
@@ -24,6 +26,7 @@ namespace MusicService.DAL
             services.AddScoped<IMelody, MelodiesRepository>();
             services.AddScoped<IGenre, GenreRepository>();
             services.AddScoped<IAlbum, AlbumRepository>();
+            services.AddScoped<IUser, UserRepository>();
 
             services.AddScoped<IAlbumMelody, AlbumMelodyRepository>();
             services.AddScoped<IGenreAlbum, GenreAlbumRepository>();
