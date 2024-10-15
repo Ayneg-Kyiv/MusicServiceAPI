@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MusicService.BLL.Commands.Connective.AlbumMelody;
@@ -9,6 +10,7 @@ using MusicService.Core.Models.DTOs.ConnectiveDTOs;
 
 namespace MusicService.API.Controllers
 {
+    [Authorize(Policy = "RoleAuthor")]
     [Route("api/[controller]")]
     [ApiController]
     public class ConnectiveTablesController(ISender sender) : ControllerBase
