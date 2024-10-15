@@ -100,7 +100,7 @@ namespace MusicService.DAL.Repository
 
         public async Task<ResponseDTO> GetAllGenresAsync()
         {
-            IEnumerable<Genre> genres = [.. _context.Genres.Include(a => a.Melodies)];
+            IEnumerable<Genre> genres = [.. _context.Genres];
 
             var getGenres = await Task.FromResult<IEnumerable<GetGenreDTO>>
                             (_mapper.Map<IEnumerable<GetGenreDTO>>(genres));
@@ -134,6 +134,8 @@ namespace MusicService.DAL.Repository
 
                 genre.Melodies = melody;
             }
+
+            Response.Result = getGenres;
 
             return Response;
         }
