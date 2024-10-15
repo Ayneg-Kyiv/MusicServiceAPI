@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicService.BLL.Commands;
 using MusicService.BLL.Queries;
@@ -11,6 +12,7 @@ namespace MusicService.API.Controllers
     public class AlbumsController(ISender sender) : ControllerBase
     {
         [HttpPost, DisableRequestSizeLimit]
+        [Authorize(Policy = "RoleAuthor")]
         public async Task<IActionResult> CreateAlbumAsync([FromForm] CreateAlbumDTO album)
         {
             var result = await sender.Send(new CreateAlbumCommand(album));
@@ -19,6 +21,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Policy = "RoleAuthor, RoleAdmin")]
         public async Task<IActionResult> DeleteAlbumAsync([FromHeader] Guid id)
         {
             var result = await sender.Send(new DeleteAlbumCommand(id));
@@ -43,6 +46,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = "RoleAuthor")]
         public async Task<IActionResult> UpdateAlbumsAsync([FromHeader] Guid id,
                                                             [FromForm] UpdateAlbumDTO album)
         {

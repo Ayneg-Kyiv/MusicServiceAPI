@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicService.BLL.Commands;
 using MusicService.BLL.Queries;
@@ -11,6 +12,7 @@ namespace MusicService.API.Controllers
     public class MelodiesController(ISender sender) : ControllerBase
     {
         [HttpPost, DisableRequestSizeLimit]
+        [Authorize(Policy = "RoleAuthor")]
         public async Task<IActionResult> CreateMelodyAsync([FromForm] CreateMelodyDTO melody)
         {
             var result = await sender.Send(new CreateMelodyCommand(melody));
@@ -19,6 +21,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "RoleAuthor, RoleAdmin")]
         public async Task<IActionResult> DeleteMelodyAsync([FromRoute] Guid id)
         {
             var result = await sender.Send(new DeleteMelodyCommand(id));
@@ -54,6 +57,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = "RoleAuthor")]
         public async Task<IActionResult> UpdateMelodyAsync([FromHeader] Guid id, [FromForm] UpdateMelodyDTO melody)
         {
             var result = await sender.Send(new UpdateMelodyCommand(id, melody));

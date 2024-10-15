@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicService.BLL.Commands;
 using MusicService.BLL.Queries;
@@ -11,6 +12,7 @@ namespace MusicService.API.Controllers
     public class GenreController(ISender sender) : ControllerBase
     {
         [HttpPost, DisableRequestSizeLimit]
+        [Authorize(Policy = "RoleAdmin")]
         public async Task<IActionResult> CreateGenreAsync([FromForm] CreateGenreDTO genre)
         {
             var result = await sender.Send(new CreateGenreCommand(genre));
@@ -19,6 +21,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Policy = "RoleAdmin, RoleAdmin")]
         public async Task<IActionResult> DeleteGenreAsync([FromHeader] Guid id)
         {
             var result = await sender.Send(new DeleteGenreCommand(id));
@@ -43,6 +46,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = "RoleAdmin")]
         public async Task<IActionResult> UpdateGenresAsync([FromHeader] Guid id,
                                                             [FromForm] UpdateGenreDTO genre)
         {
