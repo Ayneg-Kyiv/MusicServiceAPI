@@ -118,6 +118,9 @@ namespace MusicService.DAL.Repository
 
                 author.Genres = genres;
             }
+
+            Response.Result = getAuthors;
+
             return Response;
         }
 
