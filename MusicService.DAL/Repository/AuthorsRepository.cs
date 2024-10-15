@@ -8,6 +8,8 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MusicService.Core.Models.DTOs;
 using Azure;
+using MusicService.Core.Models.DTOs.MelodyDTOs;
+using MusicService.Core.Models.DTOs.GenreDTOs;
 
 namespace MusicService.DAL.Repository
 {
@@ -102,9 +104,20 @@ namespace MusicService.DAL.Repository
         {
             IEnumerable<Author> authors = [.. _context.Authors.Include(a => a.Melodies)];
 
-            Response.Result = await Task.FromResult<IEnumerable<GetAuthorDTO>>
+           var getAuthors = await Task.FromResult<IEnumerable<GetAuthorDTO>>
                             (_mapper.Map<IEnumerable<GetAuthorDTO>>(authors));
 
+            foreach (var author in getAuthors)
+            {
+                IEnumerable<Guid> guidsGenre = await _context.GenreAuthors.Where(g => g.AuthorId == author.Id)
+                                                                      .Select(g => g.GenreId)
+                                                                      .ToListAsync();
+
+                IEnumerable<GetUnconnectedGenreDTO> genres = _mapper.Map<IEnumerable<GetUnconnectedGenreDTO>>
+                    (_context.Genres.Where(g => guidsGenre.Contains(g.ID)).ToList());
+
+                author.Genres = genres;
+            }
             return Response;
         }
 
