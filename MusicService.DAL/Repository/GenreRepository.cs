@@ -4,7 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using MusicService.Core.Interfaces;
 using MusicService.Core.Models;
 using MusicService.Core.Models.DTOs;
+using MusicService.Core.Models.DTOs.AlbumsDTO;
+using MusicService.Core.Models.DTOs.AuthorDTOs;
 using MusicService.Core.Models.DTOs.GenreDTOs;
+using MusicService.Core.Models.DTOs.MelodyDTOs;
 using MusicService.DAL.Data;
 
 
@@ -99,8 +102,38 @@ namespace MusicService.DAL.Repository
         {
             IEnumerable<Genre> genres = [.. _context.Genres.Include(a => a.Melodies)];
 
-            Response.Result = await Task.FromResult<IEnumerable<GetGenreDTO>>
+            var getGenres = await Task.FromResult<IEnumerable<GetGenreDTO>>
                             (_mapper.Map<IEnumerable<GetGenreDTO>>(genres));
+
+            foreach (var genre in getGenres)
+            {
+                IEnumerable<Guid> guidsAuthors = await _context.GenreAuthors.Where(a => a.GenreId == genre.Id)
+                                                                      .Select(a => a.AuthorId)
+                                                                      .ToListAsync();
+
+                IEnumerable<GetUnconnectedAuthorDTO> author = _mapper.Map<IEnumerable<GetUnconnectedAuthorDTO>>
+                    (_context.Authors.Where(a => guidsAuthors.Contains(a.ID)).ToList());
+
+                genre.Authors = author;
+
+                IEnumerable<Guid> guidsAlbum = await _context.GenreAlbums.Where(a => a.GenreId == genre.Id)
+                                                                      .Select(a => a.AlbumId)
+                                                                      .ToListAsync();
+
+                IEnumerable<GetUnconnectedAlbumDTO> album = _mapper.Map<IEnumerable<GetUnconnectedAlbumDTO>>
+                    (_context.Albums.Where(a => guidsAlbum.Contains(a.ID)).ToList());
+
+                genre.Albums = album;
+
+                IEnumerable<Guid> guidsMelodies = await _context.GenreMelodies.Where(a => a.GenreId == genre.Id)
+                                                                      .Select(a => a.MelodyId)
+                                                                      .ToListAsync();
+
+                IEnumerable<GetUnconnectedMelodyDTO> melody = _mapper.Map<IEnumerable<GetUnconnectedMelodyDTO>>
+                    (_context.Melodies.Where(a => guidsMelodies.Contains(a.ID)).ToList());
+
+                genre.Melodies = melody;
+            }
 
             return Response;
         }

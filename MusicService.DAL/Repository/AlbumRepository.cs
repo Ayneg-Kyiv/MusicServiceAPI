@@ -124,12 +124,12 @@ namespace MusicService.DAL.Repository
 
             foreach (var album in getAlbums)
             {
-                IEnumerable<Guid> guids = await _context.AlbumMelodies.Where(a => a.AlbumId == album.Id)
+                IEnumerable<Guid> melodyGuids = await _context.AlbumMelodies.Where(a => a.AlbumId == album.Id)
                                                                       .Select(a => a.MelodyId)
                                                                       .ToListAsync();
 
                 IEnumerable<GetUnconnectedMelodyDTO> melodies = _mapper.Map<IEnumerable<GetUnconnectedMelodyDTO>>
-                    (_context.Melodies.Where(m => guids.Contains(m.ID)).ToList());
+                    (_context.Melodies.Where(m => melodyGuids.Contains(m.ID)).ToList());
 
                 album.Melodies = melodies;
             }

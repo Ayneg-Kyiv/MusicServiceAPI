@@ -139,6 +139,17 @@ namespace MusicService.DAL.Repository.Identity
 
             await _userManager.AddToRoleAsync(user, "User");
 
+            if (!string.IsNullOrWhiteSpace(register.RoleName))
+            {
+                if (!await _roleManager.RoleExistsAsync(register.RoleName))
+                {
+                    Response.Message = "User created but target role is not exists";
+
+                    return Response;
+                }
+                await _userManager.AddToRoleAsync(user, register.RoleName);
+            }
+
             Response.Message = "User was successfully created";
 
             return Response;
