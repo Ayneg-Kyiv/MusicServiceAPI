@@ -8,15 +8,17 @@
     </div>
     <div class="controls">
         <div class="info">
-            <p class="info melody-title">Very big name for my own melody</p>
-            <p class="info author-name">author</p>
+            <p class="info melody-title">Title</p>
+            <p class="info author-name">Author</p>
+        </div>
+      
+        <div class="media-bar progress-bar" id="progress-bar">
+            <div class="media-bar fill-bar">
+            </div>
         </div>
 
-        <input type="range" id="seekbar" value="0" min="0" step="0.1">
-
-
         <div class="melody-control">
-            <span id="current-time-span">0:00</span>
+            <span id="current-time-span">00:00</span>
 
             <button class="my-audio-control-button" @onclick="prevSong">
                 <img src="/img/prev.png" />
@@ -30,12 +32,12 @@
                 <img src="/img/next.png" />
             </button>
 
-            <span id="target-time-span">3:20</span>
+            <span id="target-time-span">00:00</span>
         </div>
     </div>
 </div>
 
-<style>
+<style type="text/css">
     .player-control-panel {
         visibility: hidden;
         position: fixed;
@@ -46,17 +48,20 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
+        align-items: center;
         background-color: silver;
         opacity: 60%;
         border-radius: 10px 10px 0px 0px;
     }
+
+    
     .image-panel{
         flex-basis: 14%;
         padding: 8px;
         border-radius: 10px;
         display: flex;
         justify-content: center;
-        align-content: center
+        align-self: stretch;
     }
     .img-fluid{
         border-radius: 10px;
@@ -96,12 +101,14 @@
         background-color: dimgray;
         margin-inline: 2%;
         margin-block: 2px;
+        cursor: pointer;
     }
 
     .fill-bar {
-        position: absolute;
+        position: revert;
         width: 0%;
-        background-color: yellow;  
+        max-width: inherit;
+        background-image: linear-gradient(to left, blue, pink );
     }
 
     .melody-control{
@@ -115,13 +122,28 @@
         border: 0;
         background-color: inherit;
     }
+  
+    @@media screen and (max-width: 960px) {
+        .player-control-panel {
+            left: 10%;
+            width: 80%;
+        }
 
-    .seekbar {
-        width: auto;
-        margin-inline: 2%;
-        cursor: pointer;
-        background-color: lightgray;
-        border-radius: 5px;
+        .image-panel {
+            flex-basis: 16%;
+        }
+    }
+
+    @@media screen and (max-width: 620px) {
+
+        .player-control-panel {
+            left: 0%;
+            width: 100%;
+        }
+
+        .image-panel {
+            display: none;
+        }
     }
 
 </style>

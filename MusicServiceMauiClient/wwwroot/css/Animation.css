@@ -1,0 +1,15 @@
+﻿@property --size {
+    syntax: "<size>";
+    initial-value: 20%;
+    inherits: false;
+}
+
+@keyframes changeSize {
+    from {
+        --size: 20%;
+    }
+
+    to {
+        --size: 80%;
+    }
+}

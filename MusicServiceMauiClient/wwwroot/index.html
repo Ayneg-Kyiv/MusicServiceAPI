@@ -7,6 +7,7 @@
     <base href="/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/Animation.css" />
     <link rel="stylesheet" href="MusicServiceMauiClient.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
 </head>
@@ -26,12 +27,15 @@
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
             crossorigin="anonymous"></script>
     <script src="js/playMelody.js"></script>
+    <script src="js/onLoadDom.js"></script>
     <script src="js/updateProgress.js"></script>
     <script src="js/changeState.js"></script>
-    <script src="/js/audioControl.js"></script>
+    <script src="js/onLoadPlayer.js"></script>
+    <script src="js/playlist.js"></script>
 
-
-    <div id="audio-container"><audio autoplay style="display: none" id="Player" preload="metadata" type="audio/mp3"></audio></div>
+    <div id="audio-container">
+        <audio autoplay style="display: none" id="Player" preload="metadata" type="audio/mp3" ></audio>
+    </div>
 </body>
 
 </html>

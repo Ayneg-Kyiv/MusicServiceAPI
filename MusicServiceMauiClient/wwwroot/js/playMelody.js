@@ -1,34 +1,17 @@
-﻿window.playMelody = (address, id) => {
-    let url = `https://${address}/api/Melodies/${id}`;
-    let player = $("#Player");
+window.playMelody = (address, melody) => {
+    let url = `https://${address}/api/Melodies/${melody.id}`
+    let player = $("#Player")
+    console.log(melody)
 
-    $("#Player").on("timeupdate", function () {
-        let playerElement = $(this)[0];
-        let currentTime = playerElement.currentTime;
-        let duration = playerElement.duration;
+    setCurrent(melody)
 
-       
-        let minutes = Math.floor(currentTime / 60);
-        let seconds = Math.floor(currentTime % 60);
-        let formattedTime = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-        $("#current-time-span").text(formattedTime);
+    $(player).attr("src", url)
 
-        
-        let seekbarValue = (currentTime / duration) * 100; 
-        $("#seekbar").val(seekbarValue);
-    });
+    $(".player-control-panel").css('visibility', 'visible')
+    $("#state-pic").attr('src', '/img/pause.png');
+    $(".melody-title").html(melody.title)
+    $(".active-melody").attr('src', melody.imageUrl);
 
-
-    $("#seekbar").on("input", function () {
-        let seekbarValue = $(this).val();
-        let duration = player[0].duration;
-        let newTime = (seekbarValue / 100) * duration;
-        player[0].currentTime = newTime;
-    });
-
-    $(player).attr("src", url);
-    $(".player-control-panel").css('visibility', 'visible');
-
-    $(player).load();
-    $(player).play();
+    $(player).load()
+    $(player).play()
 }
