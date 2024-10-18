@@ -1,12 +1,17 @@
-window.playMelody = (address, id) => {
-    let url = `https://${address}/api/Melodies/${id}`
-    let player = `<audio autoplay style="display: none" id="Player" preload="metadata" type="audio/mp3" src='`
-        + url + '/\' ></audio>'
+window.playMelody = (address, melody) => {
+    let url = `https://${address}/api/Melodies/${melody.id}`
+    let player = $("#Player")
+    console.log(melody)
 
-    $("#audio-container").html(player)
+    setCurrent(melody)
+
+    $(player).attr("src", url)
 
     $(".player-control-panel").css('visibility', 'visible')
+    $("#state-pic").attr('src', '/img/pause.png');
+    $(".melody-title").html(melody.title)
+    $(".active-melody").attr('src', melody.imageUrl);
 
-    $("#Player").load()
-    $("#Player").play()
+    $(player).load()
+    $(player).play()
 }

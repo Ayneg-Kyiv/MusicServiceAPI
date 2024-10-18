@@ -6,7 +6,6 @@
         public string Title { get; set; } = null!;
         public int Duration { get; set; }
 
-        public string ImageLocalPath { get; set; } = null!;
         public string? ImageUrl { get; set; }
     }
 }
