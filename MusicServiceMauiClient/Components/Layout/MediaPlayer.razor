@@ -12,10 +12,8 @@
             <p class="info author-name">author</p>
         </div>
 
-        <div class="media-bar progress-bar">
-            <div class="media-bar fill-bar">
-            </div>
-        </div>
+        <input type="range" id="seekbar" value="0" min="0" step="0.1">
+
 
         <div class="melody-control">
             <span id="current-time-span">0:00</span>
@@ -116,6 +114,14 @@
     .my-audio-control-button {
         border: 0;
         background-color: inherit;
+    }
+
+    .seekbar {
+        width: auto;
+        margin-inline: 2%;
+        cursor: pointer;
+        background-color: lightgray;
+        border-radius: 5px;
     }
 
 </style>
