@@ -1,4 +1,4 @@
-﻿using MusicServiceMauiClient.Models;
+﻿using MusicServiceMauiClient.DTOs.MelodyDTOs;
 
 namespace MusicServiceMauiClient.Constants
 {
