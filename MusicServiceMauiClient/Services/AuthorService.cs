@@ -2,27 +2,24 @@
 using MusicServiceMauiClient.DTOs.AuthorDTOs;
 using MusicServiceMauiClient.Models;
 using Newtonsoft.Json;
-using MusicServiceMauiClient.DTOs.MelodyDTOs;
+
 namespace MusicServiceMauiClient.Services
 {
-    public class MusicService : IMusic
+    public class AuthorService : IAuthor
     {
         private readonly HttpClient _httpClient = new();
         private readonly string BaseUrl = $"https://{TunnelUrlData.Url}/";
-
-
-        public async Task<IEnumerable<GetMelodyDTO>> GetMusicAsync()
+        public async Task<IEnumerable<GetAuthorDTO>> GetAuthorsAsync()
         {
-            var dataUrl = "api/Melodies/All";
+            var dataUrl = "api/Authors/";
             var response = await _httpClient.GetAsync(BaseUrl + dataUrl);
 
             var content = await response.Content.ReadAsStringAsync();
             var data = JsonConvert.DeserializeObject<ResponseDTO>(content);
 
-            return JsonConvert.DeserializeObject<IEnumerable<GetMelodyDTO>>
-                (data?.Result?.ToString() ?? "") ?? [];
+            return JsonConvert.DeserializeObject<IEnumerable<GetAuthorDTO>>(
+                data?.Result?.ToString() ?? "") ?? [];
         }
 
-      
     }
 }

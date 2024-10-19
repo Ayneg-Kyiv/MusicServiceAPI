@@ -1,8 +1,9 @@
-﻿@page "/"
+@page "/"
 
 @using Services;
-@using Models;
+@using DTOs;
 @using Constants;
+@using MusicServiceMauiClient.DTOs.MelodyDTOs;
 
 @inject IMusic music
 @inject IJSRuntime js
@@ -17,31 +18,73 @@ else
 {
     <div class="my-container">
         <div class="row">
-        @foreach (var melody in melodies)
-        {
-            <div class="col-md-3">
-                <div class="card">
-                    <img class="card-img" src="@melody.ImageUrl"/>
-                    <h2>@melody.Title</h2>
-                    <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+            @foreach (var melody in melodies)
+            {
+                <div class="col-md-2">
+                    <div class="card">
+                        <img class="card-img" src="@melody.ImageUrl" />
+                        <h2>@melody.Title</h2>
+                        <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+                    </div>
                 </div>
-            </div>
-        }
+            }
         </div>
+
     </div>
 }
 <style>
-    .my-container{
+    .my-container {
+        width: 100%;
         display: flex;
+        flex-direction: column;
         padding-inline: 4%;
         padding-top: 4%;
         padding-bottom: 10%;
-        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5) );
+        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
+        align-items: flex-start;
     }
+
+    .card {
+        margin: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .card-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+        margin: 10px 0;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+ 
+   
 </style>
 
-@code{
+@code {
     private IEnumerable<GetMelodyDTO>? melodies;
+    
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,4 +96,7 @@ else
         js.InvokeVoidAsync("setPlaylist", [melodies, id]);
         js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melodies?.Where(m => m.Id == id).SingleOrDefault()]);
     }
+
+    
+  
 }

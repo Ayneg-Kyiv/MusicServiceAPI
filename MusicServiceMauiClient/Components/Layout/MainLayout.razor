@@ -5,9 +5,24 @@
 
 <div class="wrapper">
     <div class="top-header">
-         <div class="filler"></div>
+         <div class="filler">
+
+         </div>
          <NavMenu />
-         <div class="filler"></div>
+         <div class="choice-genre">
+            <div class="genre-button" @onclick="ToggleGenreMenu">Genres</div>
+
+
+            <div class="genre-menu" style="@(isGenreMenuVisible ? "display:block;" : "display:none;")">
+                <ul>
+                    <li>Rock</li>
+                    <li>Pop</li>
+                    <li>Jazz</li>
+                    <li>Classical</li>
+
+                </ul>
+            </div>
+         </div>
     </div>
 
     <div class ="main-content">
@@ -18,6 +33,12 @@
 </div>
 
 <style>
+
+    .choice-genre{
+        flex-basis: 20%;
+       
+    }
+
     .wrapper{
         width: 100%;
         height: 100vh;
@@ -52,11 +73,62 @@
     .filler{
         flex-basis: 20%;
     }
+
+    .genre-button {
+        position: absolute;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px; 
+        border-radius: 20px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+        font-size: 0.9rem; 
+    }
+
+        .genre-button:hover {
+            background-color: #0056b3;
+        }
+
+
+    .genre-menu {
+        position: absolute;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 10px;
+        z-index: 1000;
+        top: 40px; 
+    }
+
+
+        .genre-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            .genre-menu ul li {
+                padding: 10px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+                .genre-menu ul li:hover {
+                    background-color: #f1f1f1;
+                }
 </style>
 
 @code {
+    private bool isGenreMenuVisible = false;
+
     protected override async Task OnInitializedAsync()
     {
         await js.InvokeVoidAsync("onLoadAudio");
     }
+    private void ToggleGenreMenu()
+    {
+        isGenreMenuVisible = !isGenreMenuVisible;
+    }
+
 }
