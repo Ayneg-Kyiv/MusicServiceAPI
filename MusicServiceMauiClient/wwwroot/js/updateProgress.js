@@ -1,2 +1,0 @@
-window.updateData = (title, author) => {
-}

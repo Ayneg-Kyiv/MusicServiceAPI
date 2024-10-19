@@ -1,9 +1,7 @@
 window.playMelody = (address, melody) => {
     let url = `https://${address}/api/Melodies/${melody.id}`
     let player = $("#Player")
-    console.log(melody)
-
-    setCurrent(melody)
+    
 
     $(player).attr("src", url)
 

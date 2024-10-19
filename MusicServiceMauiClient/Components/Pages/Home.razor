@@ -37,7 +37,6 @@ else
         padding-top: 4%;
         padding-bottom: 10%;
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5) );
-        
     }
 </style>
 
@@ -51,10 +50,7 @@ else
 
     public void SetCurrentMelody(Guid id)
     {
-        CurrentPlaylist.MelodyList = melodies?.ToList();
-
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, CurrentPlaylist.MelodyList?.Where(m => m.Id == id).SingleOrDefault()]);
-
-        CurrentPlaylist.CurrentMelody = id;
+        js.InvokeVoidAsync("setPlaylist", [melodies, id]);
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melodies?.Where(m => m.Id == id).SingleOrDefault()]);
     }
 }

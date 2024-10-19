@@ -1,5 +1,7 @@
 ﻿@using Constants
 
+@using Models
+
 @inject IJSRuntime js
 
 <div class="player-control-panel">
@@ -145,25 +147,18 @@
             display: none;
         }
     }
-
 </style>
 
 @code {
-    private void nextSong()
+    private async void nextSong()
     {
-        var id = CurrentPlaylist.NextMelody;
-
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
-
-        CurrentPlaylist.CurrentMelody = id;
+        var melody = await js.InvokeAsync<GetMelodyDTO>("getNext");
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melody]);
     }
-    private void prevSong()
+    private async void prevSong()
     {
-        var id = CurrentPlaylist.PrevMelody;
-
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, id]);
-
-        CurrentPlaylist.CurrentMelody = id;
+        var melody = await js.InvokeAsync<GetMelodyDTO>("getPrevious");
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melody]);
     }
     private void pausePlay()
     {
