@@ -1,19 +1,40 @@
-﻿let playlist = []
+﻿let playlist = null
 
 let previousMelody = null 
 let currentMelody = null
 let nextMelody = null
 
-const setPlaylist = (array) => {
+window.setPlaylist = (array, _id) => {
     playlist = array
+
+    currentMelody = playlist.find(({id}) => id === _id)
 }
-const setPrevios = (melody) => {
-    previousMelody = melody
-}
-const setCurrent = (melody) => {
-    currentMelody = melody
+
+window.getPrevious = () => {
+    let indexOfCurrent = playlist.indexOf(currentMelody)
+
     console.log(currentMelody)
+
+    previousMelody = playlist[--indexOfCurrent] !== undefined ? playlist[indexOfCurrent] : playlist[playlist.length-1]
+
+    currentMelody = previousMelody
+    console.log(currentMelody)
+
+    return currentMelody
 }
-const setNext = (melody) => {
-    nextMelody = melody
+
+window.getCurrent = () => {
+    return currentMelody
+}
+
+window.getNext = () => {
+    let indexOfCurrent = playlist.indexOf(currentMelody)
+
+    console.log(currentMelody)
+    nextMelody = playlist[++indexOfCurrent] !== undefined ? playlist[indexOfCurrent] : playlist[0]
+
+    currentMelody = nextMelody
+    console.log(currentMelody)
+
+    return currentMelody
 }

@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 
 @using Services;
 @using DTOs;
@@ -93,9 +93,8 @@ else
 
     public void SetCurrentMelody(Guid id)
     {
-        CurrentPlaylist.MelodyList = melodies?.ToList();
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, CurrentPlaylist.MelodyList?.Where(m => m.Id == id).SingleOrDefault()]);
-        CurrentPlaylist.CurrentMelody = id;
+        js.InvokeVoidAsync("setPlaylist", [melodies, id]);
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melodies?.Where(m => m.Id == id).SingleOrDefault()]);
     }
 
     

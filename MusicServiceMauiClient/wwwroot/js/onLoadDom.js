@@ -37,4 +37,9 @@
 
         $(".fill-bar").css('width', `${position}%`)
     })
+
+    $("#Player").on("ended", function () {
+        const next = getNext()
+        playMelody("00nz3bgf-7190.euw.devtunnels.ms", next)
+    })
 }
