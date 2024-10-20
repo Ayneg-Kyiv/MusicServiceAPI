@@ -139,7 +139,7 @@
 
     private IEnumerable<GetAuthorDTO>? authors;
     private GetAuthorDTO? selectedAuthor;
-    private IEnumerable<GetMelodyDTO>? melodies;
+    private IEnumerable<GetUnconnectedMelodyDTO>? melodies;
 
 
     protected override async Task OnInitializedAsync()
@@ -150,11 +150,7 @@
 
     private void SelectAuthor(IEnumerable<GetUnconnectedMelodyDTO> authorMelodies)
     {
-        melodies = authorMelodies.Select(m => new GetMelodyDTO
-        {
-            Id = m.Id,
-            Title = m.Title,
-        }).ToList();
+        melodies = authorMelodies;
 
         selectedAuthor = authors?.FirstOrDefault(a => a.Melodies == authorMelodies);
     }
@@ -163,9 +159,8 @@
 
     private void SetCurrentMelody(Guid id)
     {
-        CurrentPlaylist.MelodyList = melodies?.ToList();
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, CurrentPlaylist.MelodyList?.Where(m => m.Id == id).SingleOrDefault()]);
-        CurrentPlaylist.CurrentMelody = id;
+        js.InvokeVoidAsync("setPlaylist", [melodies, id]);
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melodies?.Where(m => m.Id == id).SingleOrDefault()]);
     }
 
 
