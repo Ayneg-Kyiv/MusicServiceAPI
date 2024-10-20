@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MusicService.Core.Interfaces;
 using MusicService.Core.Models;
 using MusicService.Core.Models.DTOs;
+using MusicService.Core.Models.DTOs.GenreDTOs;
 using MusicService.Core.Models.DTOs.MelodyDTOs;
 using MusicService.DAL.Data;
 using MusicService.Infrastructure.FileOperations;
@@ -124,8 +125,22 @@ namespace MusicService.DAL.Repository
         {
             IEnumerable<Melody> melodies = [.. _context.Melodies.Include(m => m.Author)];
 
-            Response.Result = await Task.FromResult<IEnumerable<GetMelodyDTO>>
+            IEnumerable<GetMelodyDTO> result = await Task.FromResult<IEnumerable<GetMelodyDTO>>
                             (_mapper.Map<IEnumerable<GetMelodyDTO>>(melodies));
+
+            foreach (var melody in result)
+            {
+                IEnumerable<Guid> genreGuids = await _context.GenreMelodies.Where(a => a.MelodyId == melody.Id)
+                                                                      .Select(a => a.GenreId)
+                                                                      .ToListAsync();
+
+                IEnumerable<GetUnconnectedGenreDTO> genres = _mapper.Map<IEnumerable<GetUnconnectedGenreDTO>>
+                    (_context.Genres.Where(a => genreGuids.Contains(a.ID)).ToList());
+
+                melody.Genres = genres;
+            }
+
+            Response.Result = result;
 
             return Response;
         }

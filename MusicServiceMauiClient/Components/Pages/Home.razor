@@ -1,7 +1,6 @@
 @page "/"
 
 @using Services;
-@using DTOs;
 @using Constants;
 @using MusicServiceMauiClient.DTOs.MelodyDTOs;
 
@@ -9,9 +8,7 @@
 @inject IMusic music
 @inject IJSRuntime js
 
-
-
-@if (melodies == null)
+@if (selectedMelodies == null)
 {
     <div class="container-fluid">
         <p><em>Loading...</em></p>
@@ -21,7 +18,7 @@ else
 {
     <div class="my-container">
         <div class="row">
-            @foreach (var melody in melodies)
+            @foreach (var melody in selectedMelodies)
             {
                 <div class="col-md-2">
                     <div class="card">
@@ -36,6 +33,7 @@ else
     </div>
 }
 <style>
+
     .my-container {
         width: 100%;
         display: flex;
@@ -45,6 +43,10 @@ else
         padding-bottom: 10%;
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
         align-items: flex-start;
+    }
+
+    .col-md-2{
+        flex: 1 1 auto;
     }
 
     .card {
@@ -81,25 +83,42 @@ else
         background-color: #0056b3;
     }
 
- 
-   
 </style>
 
 @code {
+
     private IEnumerable<GetMelodyDTO>? melodies;
-    
+    private IEnumerable<GetMelodyDTO>? selectedMelodies;
 
     protected override async Task OnInitializedAsync()
     {
+        base.OnInitialized();
+
         melodies = await music.GetMusicAsync();
+
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync(async () =>
+            {
+                Select();
+                StateHasChanged();
+            });
+        }, null, 0, 300); 
     }
 
-    public void SetCurrentMelody(Guid id)
+    private void Select()
     {
-        js.InvokeVoidAsync("setPlaylist", [melodies, id]);
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melodies?.Where(m => m.Id == id).SingleOrDefault()]);
+        if (Layout.MainLayout.selectedGenre != null)
+        {
+            selectedMelodies = melodies?.Where(m => m.Genres.Any(g => g.Id == Layout.MainLayout.selectedGenre.Id)).ToList();
+        }
+        else
+            selectedMelodies = melodies;
     }
 
-    
-  
+    public async Task SetCurrentMelody(Guid id)
+    {
+        await js.InvokeVoidAsync("setPlaylist", [selectedMelodies, id]);
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, selectedMelodies?.Where(m => m.Id == id).SingleOrDefault()]);
+    }
 }

@@ -20,8 +20,10 @@
             {
                 @foreach (var author in authors)
                 {
+                    
                     <li @onclick="() => SelectAuthor(author.Melodies!)" class="author-item">
-                        @author.Id
+                        <img src="@author.ImageUrl" alt="^_^"/>
+                        <h1>@author.Name</h1>
                     </li>
                 }
             }
@@ -33,20 +35,25 @@
         @if (selectedAuthor != null)
         {
             <h4>@selectedAuthor.Name Melodies</h4>
-            <ul>
-                @if (melodies != null)
+            <div class="row">
+                @if (selectedMelodies != null)
                 {
-                    @foreach (var melody in melodies)
+                    @foreach (var melody in selectedMelodies)
                     {
-                        <li>@melody.Title</li>
-                        <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+                        <div class="col-md-2">
+                            <div class="card">
+                                <img class="card-img" src="@melody.ImageUrl" />
+                                <h2>@melody.Title</h2>
+                                <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+                            </div>
+                        </div>
                     }
                 }
                 else
                 {
                     <li>Loading...</li>
                 }
-            </ul>
+            </div>
         }
         else
         {
@@ -76,6 +83,10 @@
         margin-bottom: 10px;
     }
 
+        .authors-list > ul{
+            padding: 0px;
+        }
+
     .songs-list {
         width: 65%;
         padding: 5px;
@@ -85,15 +96,27 @@
         border: 1px solid black;
         margin-right: 10px;
         margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
+        align-items: flex-start;
     }
 
     .author-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-content: space-between;
         padding: 10px;
         cursor: pointer;
         transition: background-color 0.3s ease;
         border-bottom: 1px solid #ddd;
         list-style-type: none; 
     }
+        .author-item > img{
+            width: 100px;
+            border-radius: 10px;
+        }
 
         .author-item:hover {
             background-color: #ffb6c1; 
@@ -110,7 +133,7 @@
     }
 
         .songs-list ul li {
-            padding: 5px;
+            padding: 0px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -133,19 +156,52 @@
         button:focus {
             outline: none;
         }
+
+    .col-md-2 {
+        flex: 1 1 auto;
+    }
+
+    .card {
+        margin: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .card-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+        margin: 10px 0;
+    }
+
 </style>
 
 @code {
 
-    private IEnumerable<GetAuthorDTO>? authors;
     private GetAuthorDTO? selectedAuthor;
+    private IEnumerable<GetAuthorDTO>? authors;
     private IEnumerable<GetUnconnectedMelodyDTO>? melodies;
+    private IEnumerable<GetUnconnectedMelodyDTO>? selectedMelodies;
 
 
     protected override async Task OnInitializedAsync()
     {
         authors = await author.GetAuthorsAsync();
 
+        var timer = new System.Threading.Timer((_) =>
+        {
+            InvokeAsync(async () =>
+            {
+                Select();
+                StateHasChanged();
+            });
+        }, null, 0, 300);
     }
 
     private void SelectAuthor(IEnumerable<GetUnconnectedMelodyDTO> authorMelodies)
@@ -155,12 +211,20 @@
         selectedAuthor = authors?.FirstOrDefault(a => a.Melodies == authorMelodies);
     }
 
-
+    private void Select()
+    {
+        if (Layout.MainLayout.selectedGenre != null)
+        {
+            selectedMelodies = melodies.Where(m => Layout.MainLayout.selectedGenre.Melodies.Any(g => g.Id == m.Id)).ToList();
+        }
+        else
+            selectedMelodies = melodies;
+    }
 
     private void SetCurrentMelody(Guid id)
     {
-        js.InvokeVoidAsync("setPlaylist", [melodies, id]);
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melodies?.Where(m => m.Id == id).SingleOrDefault()]);
+        js.InvokeVoidAsync("setPlaylist", [selectedMelodies, id]);
+        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, selectedMelodies?.Where(m => m.Id == id).SingleOrDefault()]);
     }
 
 
