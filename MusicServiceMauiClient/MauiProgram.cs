@@ -17,7 +17,9 @@ namespace MusicServiceMauiClient
                 });
 
             builder.Services.AddScoped<IMusic, MusicService>();
-            builder.Services.AddScoped<IAuthor, AuthorService>();   
+            builder.Services.AddScoped<IAuthor, AuthorService>();
+            builder.Services.AddScoped<IGenre, GenreService>();
+
             builder.Services.AddMauiBlazorWebView();
 
             #if DEBUG

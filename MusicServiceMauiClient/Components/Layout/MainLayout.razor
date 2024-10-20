@@ -1,7 +1,12 @@
 ﻿@inherits LayoutComponentBase
-@using Constants
 
+@using Constants
+@using MusicServiceMauiClient.DTOs.GenreDTOs
+@using MusicServiceMauiClient.Services
+
+@inject IGenre genre
 @inject IJSRuntime js
+
 
 <div class="wrapper">
     <div class="top-header">
@@ -10,16 +15,15 @@
          </div>
          <NavMenu />
          <div class="choice-genre">
-            <div class="genre-button" @onclick="ToggleGenreMenu">Genres</div>
-
-
+            <div class="genre-button" @onclick="ToggleGenreMenu"><div>Genres</div></div>
             <div class="genre-menu" style="@(isGenreMenuVisible ? "display:block;" : "display:none;")">
                 <ul>
-                    <li>Rock</li>
-                    <li>Pop</li>
-                    <li>Jazz</li>
-                    <li>Classical</li>
-
+                    <li id="0" @onclick="@(() => OnSelectedGenreChanged(Guid.Empty))">Any</li>
+                    @if(genres != null)
+                    @foreach(var genre in genres)
+                    {
+                        <li id="@genre.Id" @onclick="@(() => OnSelectedGenreChanged(genre.Id))">@genre.Name</li>
+                    }
                 </ul>
             </div>
          </div>
@@ -34,10 +38,6 @@
 
 <style>
 
-    .choice-genre{
-        flex-basis: 20%;
-       
-    }
 
     .wrapper{
         width: 100%;
@@ -74,17 +74,32 @@
         flex-basis: 20%;
     }
 
+    .choice-genre {
+        flex-basis: 20%;
+    }
+
     .genre-button {
         position: absolute;
+        display: flex;
+        width: -webkit-fill-available;
+        height: -webkit-fill-available;
+        justify-content: center;
         background-color: #007bff;
+        margin-inline: 8px;
+        margin-block: 8px;
         color: white;
-        padding: 10px 15px; 
         border-radius: 20px;
         cursor: pointer;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         transition: background-color 0.3s ease;
-        font-size: 0.9rem; 
     }
+        
+        .genre-button > div {
+            justify-self: center;
+            align-self: center;
+            color: rgba(0, 0, 255, 0.8);
+            font-size: large;
+        }
 
         .genre-button:hover {
             background-color: #0056b3;
@@ -93,12 +108,16 @@
 
     .genre-menu {
         position: absolute;
+        width: -webkit-fill-available;
+        padding-inline: 5px;
+        margin-inline: 8px;
+        text-align: center;
         background-color: white;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         border-radius: 10px;
         padding: 10px;
         z-index: 1000;
-        top: 40px; 
+        top: 6vh; 
     }
 
 
@@ -110,6 +129,7 @@
 
             .genre-menu ul li {
                 padding: 10px;
+                text-align: center;
                 cursor: pointer;
                 transition: background-color 0.3s ease;
             }
@@ -122,13 +142,24 @@
 @code {
     private bool isGenreMenuVisible = false;
 
+    private IEnumerable<GetGenreDTO>? genres;
+
+    public static GetGenreDTO? selectedGenre;
+
     protected override async Task OnInitializedAsync()
     {
         await js.InvokeVoidAsync("onLoadAudio");
+        genres = await genre.GetGenresAsync();
     }
+
     private void ToggleGenreMenu()
     {
         isGenreMenuVisible = !isGenreMenuVisible;
     }
 
+    private void OnSelectedGenreChanged (Guid id)
+    {
+        selectedGenre = genres?.Where(g => g.Id == id).SingleOrDefault();
+        StateHasChanged();
+    }
 }
