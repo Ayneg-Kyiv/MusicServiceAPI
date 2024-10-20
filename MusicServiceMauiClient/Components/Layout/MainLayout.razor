@@ -1,17 +1,33 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 @using Constants
 @using MusicServiceMauiClient.DTOs.GenreDTOs
 @using MusicServiceMauiClient.Services
 
-@inject IGenre genre
+@using Services;
+@inject NavigationManager Navigation
+@inject IAuthorization AuthorizationService
 @inject IJSRuntime js
-
 
 <div class="wrapper">
     <div class="top-header">
-         <div class="filler">
+         <div  class="login-menu">
+@if (AuthorizationService.IsUserLoggedIn())
+{
+        <div class="my-nav-item">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                <img class="nav-link-img" src="/img/main.png" />
+                <h2>Welcome, @AuthorizationService.GetEmailUser() </h2>
+            </NavLink>
+            <button class="logout-button" @onclick="LogoutUser">Logout</button>
+        </div>
+}
+else
+{
+        <h1>Please log in or register to access the content.</h1>
+        <NavLink class="btn btn-primary" href="/logins">Log In</NavLink>
 
+}
          </div>
          <NavMenu />
          <div class="choice-genre">
@@ -137,6 +153,36 @@
                 .genre-menu ul li:hover {
                     background-color: #f1f1f1;
                 }
+
+   .login-button {
+        background-color: #28a745; 
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+        margin-right: 10px; 
+        align-self: flex-start; 
+    }
+
+    .logout-button {
+    background-color: #dc3545; 
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c82333; 
+}
+
+
+
+    
 </style>
 
 @code {
@@ -162,4 +208,14 @@
         selectedGenre = genres?.Where(g => g.Id == id).SingleOrDefault();
         StateHasChanged();
     }
+    private void NavigateToLogin(){
+        Navigation.NavigateTo("/logins");
+    }
+
+    public void LogoutUser()
+    {
+        AuthorizationService.LogOut();
+        Navigation.NavigateTo("/");
+    }
+
 }
