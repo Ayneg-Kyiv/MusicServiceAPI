@@ -1,1 +1,124 @@
-﻿
+﻿@page "/register"
+
+@using MusicServiceMauiClient.DTOs.IdentityDTOs;
+@using MusicServiceMauiClient.Services;
+
+@inject IJSRuntime js
+@inject ILogin loginService
+@inject IRegister registerService
+@inject NavigationManager Navigation
+
+<div class="my-container">
+    <EditForm Model="@registeModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <InputText id="email" class="form-control" @bind-Value="registeModel.Email" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="registeModel.Password" />
+        </div>
+
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <InputText id="role" type="text" class="form-control" @bind-Value="registeModel.RoleName" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Register</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(RegisterErrorMessage))
+    {
+        <div class="alert alert-danger">@RegisterErrorMessage</div>
+    }
+</div>
+
+<style>
+    .my-container {
+        width: 200%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-inline: 4%;
+        padding-top: 4%;
+        padding-bottom: 10%;
+        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
+        align-items: flex-start;
+    }
+
+    form {
+        height: 100%;
+        width: 40%;
+        justify-content: center;
+        justify-self: center;
+        align-self: center;
+        align-items: center;
+        margin: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 4px;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+</style>
+
+@code {
+    private string? RegisterErrorMessage;
+    private RegisterDTO registeModel = new();
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await registerService.Register(registeModel);
+
+        if(result)
+        {
+            var token = await loginService.LoginAsync(new ()
+            { 
+                Email = registeModel.Email, 
+                Password = registeModel.Password 
+            });
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                RegisterErrorMessage = "Register failed. Please check your credentials.";
+            }
+            
+        }
+        else
+            RegisterErrorMessage = "Register failed. Please check your credentials.";
+    }
+}

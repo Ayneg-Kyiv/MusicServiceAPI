@@ -11,5 +11,6 @@ namespace MusicServiceMauiClient.Services
         bool IsUserLoggedIn();
         public string GetEmailUser();
         public void LogOut();
+        public bool DoesRoleExists(string roleName);
     }
 }

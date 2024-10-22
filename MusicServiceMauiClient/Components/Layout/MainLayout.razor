@@ -1,33 +1,27 @@
 @inherits LayoutComponentBase
 
-@using Constants
 @using MusicServiceMauiClient.DTOs.GenreDTOs
-@using MusicServiceMauiClient.Services
-
+@using Constants
 @using Services;
-@inject NavigationManager Navigation
+
 @inject IAuthorization AuthorizationService
+@inject NavigationManager Navigation
 @inject IJSRuntime js
+@inject IGenre genre
 
 <div class="wrapper">
     <div class="top-header">
-         <div  class="login-menu">
-@if (AuthorizationService.IsUserLoggedIn())
-{
-        <div class="my-nav-item">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <img class="nav-link-img" src="/img/main.png" />
-                <h2>Welcome, @AuthorizationService.GetEmailUser() </h2>
-            </NavLink>
-            <button class="logout-button" @onclick="LogoutUser">Logout</button>
-        </div>
-}
-else
-{
-        <h1>Please log in or register to access the content.</h1>
-        <NavLink class="btn btn-primary" href="/logins">Log In</NavLink>
-
-}
+         <div class="login-menu">
+             @if (AuthorizationService.IsUserLoggedIn())
+             {
+                 <NavLink class="identity-button" href="/dashboard" Match="NavLinkMatch.All"><div>Dashboard</div></NavLink>
+                 <button class="identity-button" @onclick="LogoutUser"><div>Logout</div></button>
+             }
+             else
+             {
+                 <NavLink class="identity-button" href="/logins"><div>Login</div></NavLink>
+                 <NavLink class="identity-button" href="/register"><div>Sighin</div></NavLink>
+             }
          </div>
          <NavMenu />
          <div class="choice-genre">
@@ -54,7 +48,6 @@ else
 
 <style>
 
-
     .wrapper{
         width: 100%;
         height: 100vh;
@@ -66,6 +59,34 @@ else
         justify-content: center;
         align-content: center;
     }
+    
+    .login-menu{
+        flex-basis: 20%;
+        display: flex;
+        justify-content: space-between;
+        align-content: center;
+    }
+
+    .identity-button{
+        display: flex;
+        flex-basis: 45%;
+        margin-inline: 8px;
+        margin-block: 8px;
+        background-color: #007bff;
+        border-radius: 20px;
+        justify-content: center;
+        align-content: center;
+    }
+
+        .identity-button:hover {
+            background-color: #c82333; 
+        }
+
+        .identity-button > div {
+            align-self: center;
+            color: rgba(0, 0, 255, 0.8);
+            font-size: large;
+        }
 
     .top-header{
         flex-basis: 6vh;
@@ -84,10 +105,6 @@ else
     .main-content {
         flex: 1 1 auto;
         display: flex;
-    }
-
-    .filler{
-        flex-basis: 20%;
     }
 
     .choice-genre {
@@ -153,36 +170,6 @@ else
                 .genre-menu ul li:hover {
                     background-color: #f1f1f1;
                 }
-
-   .login-button {
-        background-color: #28a745; 
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s ease;
-        margin-right: 10px; 
-        align-self: flex-start; 
-    }
-
-    .logout-button {
-    background-color: #dc3545; 
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-    background-color: #c82333; 
-}
-
-
-
-    
 </style>
 
 @code {
@@ -198,10 +185,7 @@ else
         genres = await genre.GetGenresAsync();
     }
 
-    private void ToggleGenreMenu()
-    {
-        isGenreMenuVisible = !isGenreMenuVisible;
-    }
+    private void ToggleGenreMenu() => isGenreMenuVisible = !isGenreMenuVisible;
 
     private void OnSelectedGenreChanged (Guid id)
     {
