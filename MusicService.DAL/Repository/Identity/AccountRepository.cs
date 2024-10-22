@@ -52,7 +52,13 @@ namespace MusicService.DAL.Repository.Identity
                         Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)),
                     SecurityAlgorithms.HmacSha256));
 
-            Response.Result = new JwtSecurityTokenHandler().WriteToken(Token);
+
+            var handledToken =  new JwtSecurityTokenHandler().WriteToken(Token);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            TokenReturn tokenReturn = new() { Token = handledToken, Roles = roles };
+
+            Response.Result = tokenReturn;
 
             return Response;
         }

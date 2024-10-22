@@ -1,4 +1,4 @@
-﻿@page "/authors"
+﻿@page "/authors-dashboard"
 
 @using MusicServiceMauiClient.DTOs.AuthorDTOs;
 @using MusicServiceMauiClient.DTOs.MelodyDTOs
@@ -13,14 +13,16 @@
 <div class="my-container">
 
     <div class="authors-list">
+        <a>Add author</a>
         <ul>
             @if (authors != null)
             {
                 @foreach (var author in authors)
                 {
                     <li @onclick="() => SelectAuthor(author.Melodies!)" class="author-item">
-                        <img src="@author.ImageUrl" alt="^_^"/>
-                        <h1>@author.Name</h1>
+                        <img src="@author.ImageUrl" alt="^_^" />
+                        <h4>@author.Name</h4>
+                        <button value="@author.Id" id="deleteButton" @onclick="(() => DeleteAuthor(author.Id))">Delete</button>
                     </li>
                 }
             }
@@ -39,11 +41,17 @@
                         <div class="col-md-2">
                             <div class="card">
                                 <img class="card-img" src="@melody.ImageUrl" />
-                                <h2>@melody.Title</h2>
-                                <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+                                <h4>@melody.Title</h4>
+                                <button value="@melody.Id" id="deleteButton" @onclick="(() => DeleteMelody(melody.Id))">Delete</button>
                             </div>
                         </div>
                     }
+
+                    <div class="col-md-2">
+                        <div class="card">
+                            <a id="addButton" href="/add-melody">Add Melody</a>
+                        </div>
+                    </div>
                 }
                 else
                 {
@@ -68,12 +76,12 @@
         flex-direction: row;
         justify-content: space-between;
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
-        width: 100%;        
+        width: 100%;
     }
 
     .authors-list {
         width: 30%;
-        background-color: #ffcccb; 
+        background-color: #ffcccb;
         padding: 5px;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -82,7 +90,7 @@
         margin-bottom: 10px;
     }
 
-        .authors-list > ul{
+        .authors-list > ul {
             padding: 0px;
         }
 
@@ -110,19 +118,20 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
         border-bottom: 1px solid #ddd;
-        list-style-type: none; 
+        list-style-type: none;
     }
-        .author-item > img{
+
+        .author-item > img {
             width: 100px;
             border-radius: 10px;
         }
 
         .author-item:hover {
-            background-color: #ffb6c1; 
+            background-color: #ffb6c1;
         }
 
         .author-item.active {
-            background-color: #ff69b4; 
+            background-color: #ff69b4;
             color: white;
         }
 
@@ -138,8 +147,8 @@
             align-items: center;
         }
 
-    button {
-        background-color: #4caf50; 
+    button, .deleteButton {
+        background-color: #4caf50;
         color: white;
         border: none;
         padding: 8px 12px;
@@ -149,12 +158,16 @@
     }
 
         button:hover {
-            background-color: #45a049; 
+            background-color: #45a049;
         }
 
         button:focus {
             outline: none;
         }
+
+    .deleteButton{
+        background-color: red;
+    }
 
     .col-md-2 {
         flex: 1 1 auto;
@@ -213,17 +226,15 @@
     {
         if (Layout.MainLayout.selectedGenre != null)
         {
-            selectedMelodies = melodies.Where(m => Layout.MainLayout.selectedGenre.Melodies.Any(g => g.Id == m.Id)).ToList();
+            selectedMelodies = melodies?.Where(m => Layout.MainLayout.selectedGenre!.Melodies!.Any(g => g.Id == m.Id)).ToList();
         }
         else
             selectedMelodies = melodies;
     }
 
-    private void SetCurrentMelody(Guid id)
-    {
-        js.InvokeVoidAsync("setPlaylist", [selectedMelodies, id]);
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, selectedMelodies?.Where(m => m.Id == id).SingleOrDefault()]);
-    }
+    private async Task<bool> DeleteAuthor(Guid id) => false;
+    private async Task<bool> DeleteMelody(Guid id) => false;
+
 
     private string GetActiveClass(GetAuthorDTO author)
     {

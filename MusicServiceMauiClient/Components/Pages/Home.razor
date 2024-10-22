@@ -8,6 +8,8 @@
 @inject IMusic music
 @inject IJSRuntime js
 
+<div class="my-container">
+
 @if (selectedMelodies == null)
 {
     <div class="container-fluid">
@@ -16,7 +18,6 @@
 }
 else
 {
-    <div class="my-container">
         <div class="row">
             @foreach (var melody in selectedMelodies)
             {
@@ -30,8 +31,10 @@ else
             }
         </div>
 
-    </div>
 }
+
+</div>
+
 <style>
 
     .my-container {

@@ -4,7 +4,6 @@ using MusicServiceMauiClient.Models;
 using Newtonsoft.Json;
 using System.Text;
 
-
 namespace MusicServiceMauiClient.Services
 {
     public class LoginService : ILogin
@@ -12,7 +11,8 @@ namespace MusicServiceMauiClient.Services
         private readonly HttpClient _httpClient = new();
         private readonly string BaseUrl = $"https://{TunnelUrlData.Url}/";
         private string? _authToken;
-        private string? _email; 
+        private string? _email;
+        private IEnumerable<string>? _roles;
 
         public async Task<string> LoginAsync(LoginDTO loginModel)
         {
@@ -22,31 +22,28 @@ namespace MusicServiceMauiClient.Services
 
             var response = await _httpClient.PostAsync(dataUrl, content);
             var responseString = await response.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject<ResponseDTO>(responseString);
-            var token = data!.Result!.ToString();
+            var data = JsonConvert.DeserializeObject<ResponseDTO>(responseString); 
+            var userData = JsonConvert.DeserializeObject<TokenReturn>(data.Result.ToString());
+            var token = userData.Token;
+            var roles = userData.Roles;
 
             if (!string.IsNullOrEmpty(token))
             {
                 _authToken = token;
                 _email = loginModel.Email;
-                return token;
+                _roles = roles;
+
+                return "token";
             }
             else
-            {
                 return string.Empty;
-            }
         }
 
-        public bool IsLoggedIn()
-        {
-            
-            return !string.IsNullOrEmpty(_authToken);
-        }
+        public bool IsLoggedIn() => !string.IsNullOrEmpty(_authToken);
 
-        public string GetEmail()
-        {
-            return _email;
-        }
+        public string GetEmail()=> _email ?? "";
+
+        public bool DoesRoleExists(string roleName) => _roles!.Contains(roleName);
 
         public void LogOut()
         {

@@ -1,0 +1,33 @@
+﻿@page "/dashboard"
+
+@using MusicServiceMauiClient.Components.Layout
+@using Services
+
+@inject IAuthorization authorizationService
+
+<div class="dashboard">
+    @if (authorizationService.DoesRoleExists("Author"))
+    {
+        <AuthorDashbord />
+    }
+
+    @if (authorizationService.DoesRoleExists("Admin"))
+    {
+        <GenreDashboard />
+    }
+</div>
+
+<style>
+    .dashboard {
+        padding-top: 4%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+</style>
+
+@code {
+
+}

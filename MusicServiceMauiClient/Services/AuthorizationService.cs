@@ -15,20 +15,13 @@ namespace MusicServiceMauiClient.Services
             this.loginService = loginService;
         }
 
-        public bool IsUserLoggedIn()
-        {
-            return loginService.IsLoggedIn();
-        }
+        public bool IsUserLoggedIn() => loginService.IsLoggedIn();
+        
+        public string GetEmailUser() => loginService.GetEmail();
 
-        public string GetEmailUser()
-        {
-            return loginService.GetEmail();
-        }
+        public bool DoesRoleExists(string roleName) => loginService.DoesRoleExists(roleName);
 
-        public void LogOut()
-        {
-            loginService.LogOut();
-        }
+        public void LogOut() =>loginService.LogOut();
     }
 }
 
