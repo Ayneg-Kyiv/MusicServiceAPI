@@ -9,7 +9,6 @@ namespace MusicServiceMauiClient.Services
         Task<string> LoginAsync(LoginDTO loginModel);
 
         public string GetEmail();
-        public string GetToken();
 
         public bool DoesRoleExists(string roleName);
 

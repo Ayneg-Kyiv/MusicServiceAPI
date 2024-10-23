@@ -5,13 +5,12 @@
 @using Constants
 
 @inject ILogin login
+@inject IJSRuntime js
+@inject NavigationManager Navigation
 
 <div class="my-container">
-    <form >
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="form-group">
+   
+       <div class="form-group">
             <label for="name">Name:</label>
             <input id="name" class="form-control" />
         </div>
@@ -22,29 +21,24 @@
         </div>
 
         <div class="form-group">
-            <label for="about">About author:</label>
+            <label for="about">File:</label>
             <input id="imageFile" type="file" class="form-control" />
         </div>
 
-        <button type="submit" id="add-button" class="btn btn-primary">Create Author</button>
-    </form>
-    
+        <button id="add-button" class="btn btn-primary" @onclick="(() => Handle())">Create Author</button>
+   
     <div class="alert alert-danger wrong-data"></div>
 </div>
 
-<script type="text/javascript">
-    
-    $(document).on('click', '#add-button', function () {
-        $.ajax.({
-            url: `https://${@TunnelUrlData.Url}/api/Authors`,
-            Headers:
-            {
-                "Authorization": `Bearer ${@login.GetToken()}`
-            }
-            type: "POST",
-            dataType:"json",
-            data: 
-        })
-    })
+@code{
 
-</script>
+    private async Task Handle()
+    {
+
+        var result = await js.InvokeAsync<bool>("JavaSc", TunnelUrlData.Url, login.GetToken());
+        if(result)
+        {
+            Navigation.NavigateTo("/authors-dashboard");
+        }
+    }
+}
