@@ -12,6 +12,8 @@ namespace MusicServiceMauiClient.Services
 
         public bool DoesRoleExists(string roleName);
 
+        public string GetToken();
+
         public void LogOut();
     }
 }
