@@ -1,0 +1,50 @@
+﻿@page "/add-author"
+
+@using DTOs.AuthorDTOs;
+@using Services
+@using Constants
+
+@inject ILogin login
+
+<div class="my-container">
+    <form >
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input id="name" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="about">About author:</label>
+            <input id="about" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label for="about">About author:</label>
+            <input id="imageFile" type="file" class="form-control" />
+        </div>
+
+        <button type="submit" id="add-button" class="btn btn-primary">Create Author</button>
+    </form>
+    
+    <div class="alert alert-danger wrong-data"></div>
+</div>
+
+<script type="text/javascript">
+    
+    $(document).on('click', '#add-button', function () {
+        $.ajax.({
+            url: `https://${@TunnelUrlData.Url}/api/Authors`,
+            Headers:
+            {
+                "Authorization": `Bearer ${@login.GetToken()}`
+            }
+            type: "POST",
+            dataType:"json",
+            data: 
+        })
+    })
+
+</script>

@@ -42,6 +42,7 @@ namespace MusicServiceMauiClient.Services
         public bool IsLoggedIn() => !string.IsNullOrEmpty(_authToken);
 
         public string GetEmail()=> _email ?? "";
+        public string GetToken()=> _authToken ?? "";
 
         public bool DoesRoleExists(string roleName) => _roles!.Contains(roleName);
 

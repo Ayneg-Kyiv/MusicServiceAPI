@@ -21,7 +21,7 @@ namespace MusicService.API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Policy = "RoleAdmin, RoleAdmin")]
+        [Authorize(Policy = "RoleAdmin")]
         public async Task<IActionResult> DeleteGenreAsync([FromHeader] Guid id)
         {
             var result = await sender.Send(new DeleteGenreCommand(id));

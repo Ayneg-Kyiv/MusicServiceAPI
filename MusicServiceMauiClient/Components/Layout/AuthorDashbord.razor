@@ -6,9 +6,11 @@
 @using Services;
 @using Models;
 
+@inject IAuthorization authorizationService
+@inject NavigationManager Navigation
 @inject IAuthor author
-@inject IMusic music
 @inject IJSRuntime js
+@inject IMusic music
 
 <div class="my-container">
 
@@ -46,22 +48,18 @@
                             </div>
                         </div>
                     }
-
                     <div class="col-md-2">
                         <div class="card">
                             <a id="addButton" href="/add-melody">Add Melody</a>
                         </div>
                     </div>
                 }
-                else
-                {
+                else{
                     <div>Loading...</div>
                 }
             </div>
         }
-
-        else
-        {
+        else{
             <p>Please select an author to view their melodies.</p>
         }
     </div>
@@ -225,19 +223,26 @@
     private void Select()
     {
         if (Layout.MainLayout.selectedGenre != null)
-        {
             selectedMelodies = melodies?.Where(m => Layout.MainLayout.selectedGenre!.Melodies!.Any(g => g.Id == m.Id)).ToList();
-        }
         else
             selectedMelodies = melodies;
     }
 
-    private async Task<bool> DeleteAuthor(Guid id) => false;
-    private async Task<bool> DeleteMelody(Guid id) => false;
+    private async Task DeleteAuthor(Guid id) {
+        var result = await author.DeleteAuthorAsync(id);
 
-
-    private string GetActiveClass(GetAuthorDTO author)
-    {
-        return selectedAuthor != null && selectedAuthor.Id == author.Id ? "active" : "";
+        if(result)
+            Navigation.NavigateTo("/authors-dashboard");
     }
+
+    private async Task DeleteMelody(Guid id)
+    {
+        var result = await music.DeleteMelodyAsync(id);
+
+        if (result)
+            Navigation.NavigateTo("/authors-dashboard");       
+    }
+
+    private string GetActiveClass(GetAuthorDTO author) =>
+        selectedAuthor != null && selectedAuthor.Id == author.Id ? "active" : "";
 }
