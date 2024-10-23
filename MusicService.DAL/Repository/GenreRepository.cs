@@ -67,6 +67,28 @@ namespace MusicService.DAL.Repository
                 return Response;
             }
 
+            try
+            {
+                var albums = await _context.GenreAlbums.Where(c => c.GenreId == genre.ID).ToListAsync();
+                foreach (var album in albums)
+                    _context.GenreAlbums.Remove(album);
+
+                var melodie = await _context.GenreMelodies.Where(c => c.GenreId == genre.ID).ToListAsync();
+                foreach (var melody in melodie)
+                    _context.GenreMelodies.Remove(melody);
+
+                var authors = await _context.GenreAuthors.Where(c => c.GenreId == genre.ID).ToListAsync();
+                foreach(var author in authors)
+                    _context.GenreAuthors.Remove(author);
+            }
+            catch (Exception ex)
+            {
+                    Response.IsSuccess = false;
+                    Response.Message = "Error occured when object delete from database";
+
+                    return Response;
+            }
+
             _context.Genres.Remove(genre);
 
             var result = await _context.SaveChangesAsync();
