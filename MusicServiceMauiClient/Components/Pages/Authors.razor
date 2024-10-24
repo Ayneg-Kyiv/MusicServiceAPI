@@ -37,11 +37,15 @@
                     @foreach (var melody in selectedMelodies)
                     {
                         <div class="col-md-2">
+
                             <div class="card">
+
                                 <img class="card-img" src="@melody.ImageUrl" />
                                 <h2>@melody.Title</h2>
                                 <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+
                             </div>
+
                         </div>
                     }
                 }
@@ -51,7 +55,6 @@
                 }
             </div>
         }
-
         else
         {
             <p>Please select an author to view their melodies.</p>
@@ -63,7 +66,7 @@
 <style>
 
     .my-container {
-        padding-top: 4%;
+        padding-top: 1%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
