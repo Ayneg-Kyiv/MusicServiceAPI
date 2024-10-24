@@ -1,5 +1,83 @@
-﻿<h3>AddMelody</h3>
+﻿@page "/add-melody"
+@page "/add-melody/{authorId:Guid}"
+
+
+@using DTOs.MelodyDTOs;
+@using Services
+@using Constants
+
+@inject ILogin login
+@inject IJSRuntime js
+@inject NavigationManager Navigation
+
+
+<div class="my-container">
+<div class="form-group">
+    <label for="title">Title:</label>
+    <input id="title" class="form-control" required min="2" />
+    <input value="@authorId" style="visibility:hidden" id="authorId"/>
+</div>
+
+<div class="form-group">
+    <label for="duration">Duration:</label>
+    <input id="duration" type="number" class="form-control" required min="20" />
+</div>
+
+<div class="form-group">
+    <label for="audioFile">Audio File:</label>
+    <input id="audioFile" type="file" class="form-control" />
+</div>
+<div class="form-group">
+    <label for="imageFile">File:</label>
+    <input id="imageFile" type="file" class="form-control" />
+</div>
+ <div class="form-group">
+            <button id="add-button" class="add-button" @onclick="(() => Handle())">Create Melody</button>
+        </div>
+</div>
+<style>
+
+    .my-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-content: center;
+        padding-top: 4%;
+        padding-bottom: 10%;
+        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
+        align-items: flex-start;
+    }
+
+    .form-group{
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .add-button{
+        padding: 10px;
+        text-align: center;
+        font-size: larger;
+        background-color: mediumpurple;
+        border-radius: 20px;
+    }
+   
+
+</style>
 
 @code {
+    [Parameter]
+    public string authorId { get; set; }
+    private async Task Handle()
+    {
 
+        var result = await js.InvokeAsync<bool>("AddMelody", TunnelUrlData.Url, login.GetToken());
+        if (result)
+        {
+            Navigation.NavigateTo("/dashboard");
+        }
+    }
 }

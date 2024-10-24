@@ -21,7 +21,7 @@
             {
                 @foreach (var author in authors)
                 {
-                    <li @onclick="() => SelectAuthor(author.Melodies!)" class="author-item">
+                    <li @onclick="() => SelectAuthor(author)" class="author-item">
                         <img src="@author.ImageUrl" alt="^_^" />
                         <h4>@author.Name</h4>
                         <button value="@author.Id" id="deleteButton" @onclick="(() => DeleteAuthor(author.Id))">Delete</button>
@@ -50,7 +50,7 @@
                     }
                     <div class="col-md-2">
                         <div class="card">
-                            <a id="addButton" href="/add-melody">Add Melody</a>
+                            <a id="addButton" href="/add-melody/@selectedAuthor.Id">Add Melody</a>
                         </div>
                     </div>
                 }
@@ -194,7 +194,7 @@
 
 @code {
 
-    private GetAuthorDTO? selectedAuthor;
+    public GetAuthorDTO? selectedAuthor;
     private IEnumerable<GetAuthorDTO>? authors;
     private IEnumerable<GetUnconnectedMelodyDTO>? melodies;
     private IEnumerable<GetUnconnectedMelodyDTO>? selectedMelodies;
@@ -213,11 +213,10 @@
         }, null, 0, 300);
     }
 
-    private void SelectAuthor(IEnumerable<GetUnconnectedMelodyDTO> authorMelodies)
+    private void SelectAuthor(GetAuthorDTO author)
     {
-        melodies = authorMelodies;
-
-        selectedAuthor = authors?.FirstOrDefault(a => a.Melodies == authorMelodies);
+        selectedAuthor = author;
+        melodies = author.Melodies;
     }
 
     private void Select()

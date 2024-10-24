@@ -182,8 +182,18 @@
     protected override async Task OnInitializedAsync()
     {
         await js.InvokeVoidAsync("onLoadAudio");
-        genres = await genre.GetGenresAsync();
+
+       var timer = new System.Threading.Timer((_) =>
+       {
+           InvokeAsync(async () =>
+           {
+               genres = await genre.GetGenresAsync();
+               StateHasChanged();
+           });
+       }, null, 0, 1000);
     }
+
+   
 
     private void ToggleGenreMenu() => isGenreMenuVisible = !isGenreMenuVisible;
 

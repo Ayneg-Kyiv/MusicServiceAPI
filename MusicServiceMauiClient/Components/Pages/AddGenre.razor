@@ -1,5 +1,72 @@
-﻿<h3>AddGenre</h3>
+﻿@page "/add-genre"
+
+@using DTOs.GenreDTOs;
+@using Services
+@using Constants
+
+@inject ILogin login
+@inject IJSRuntime js
+@inject NavigationManager Navigation
+
+<div class="my-container">
+       <div class="form-group">
+            <label for="name">Name:</label>
+            <input id="name" class="form-control" required min="2"/>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input id="description" class="form-control" required min="20"/>
+        </div>
+
+        <div class="form-group">
+            <button id="add-button" class="add-button" @onclick="(() => Handle())">Create Author</button>
+        </div>
+   
+    <div class="alert alert-danger wrong-data"></div>
+</div>
+
+<style>
+
+    .my-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-content: center;
+        padding-top: 4%;
+        padding-bottom: 10%;
+        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
+        align-items: flex-start;
+    }
+
+    .form-group {
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .add-button {
+        padding: 20px;
+        background-color: mediumpurple;
+        border-radius: 20px;
+    }
+
+</style>
 
 @code {
+
+    private async Task Handle()
+    {
+
+        var result = await js.InvokeAsync<bool>("AddGenre", TunnelUrlData.Url, login.GetToken());
+        if (result)
+        {
+            Navigation.NavigateTo("/dashboard");
+        }
+
+    }
 
 }

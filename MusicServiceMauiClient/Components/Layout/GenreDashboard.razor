@@ -6,64 +6,28 @@
 
 @inject IGenre genre
 @inject IMusic music
+@inject NavigationManager Navigation
 @inject IAuthorization authorization
 
 <div class="my-container">
 
-    <div class="genres-list">
-        <input type="text"  placeholder="Enter genre name" />
-        <button class="add-genre">Add Genre</button>
+      <div class="genres-list">
+       
+      <NavLink class="nav-link" href="./add-genre" Match="NavLinkMatch.All">Add genre</NavLink>
+ 
         <ul>
             @if (genres != null)
             {
                 @foreach (var genre in genres)
                 {
-                    <li @onclick="() => SelectGenre(genre.Albums!)" class="genre-item">
+                    <li class="genre-item">
                         <h4>@genre.Name</h4>
-                        @if (authorization.DoesRoleExists("Admin"))
-                        {
-                            <button value="@genre.Id" id="deleteButton" @onclick="(() => DeleteGenre(genre.Id))">Delete</button>
-                        }
+                        <p>@genre.Description</p>
+                        <button value="@genre.Id" id="deleteButton" @onclick="(() => DeleteGenre(genre.Id))">Delete</button>
                     </li>
                 }
             }
-            else
-            {
-                <li>Loading genres...</li>
-            }
         </ul>
-    </div>
-
-    <div class="albums-list">
-        @if (selectedGenre != null)
-        {
-            <h4>Albums in Genre: @selectedGenre.Name</h4>
-            <div class="row">
-                @if (selectedAlbums != null)
-                {
-                    @foreach (var album in selectedAlbums)
-                    {
-                        <div class="col-md-2">
-                            <div class="card">
-                                <h4>@album.Title</h4>
-                                @if (authorization.DoesRoleExists("Admin"))
-                                {
-                                    //<button value="@album.Id" id="deleteButton" @onclick="(() => DeleteAlbum(album.Id))">Delete</button>
-                                }
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div>Loading albums...</div>
-                }
-            </div>
-        }
-        else
-        {
-            <p>Please select a genre to view its albums.</p>
-        }
     </div>
 </div>
 <style>
@@ -173,7 +137,8 @@
 @code {
     private GetGenreDTO? selectedGenre;
     private IEnumerable<GetGenreDTO>? genres;
-    private IEnumerable<GetUnconnectedAlbumDTO>? selectedAlbums;
+  
+   
 
     protected override async Task OnInitializedAsync()
     {
@@ -189,19 +154,14 @@
         }, null, 0, 300);
     }
 
-    private void SelectGenre(IEnumerable<GetUnconnectedAlbumDTO> albumGenres)
-    {
-        selectedAlbums = albumGenres; 
-        selectedGenre = genres?.FirstOrDefault(g => g.Albums == albumGenres); 
+   
+    private async Task DeleteGenre(Guid id) {
+        var result = await genre.DeleteGenreAsync(id);
+
+        if(result)
+            Navigation.NavigateTo("/dashboard");
     }
 
-    private async Task DeleteGenre(Guid genreId)
-    {
-        bool success = await genre.DeleteGenreAsync(genreId);
-        if (success)
-        {
-            genres = genres.Where(g => g.Id != genreId);
-            StateHasChanged();
-        }
-    }
+    private string GetActiveClass(GetGenreDTO genre) =>
+        selectedGenre != null && selectedGenre.Id == genre.Id ? "active" : "";
 }
