@@ -7,6 +7,5 @@
 
         public Guid AuthorId { get; set; }
 
-        //public IFormFile? ImageFile { get; set; }
     }
 }
