@@ -10,9 +10,9 @@ namespace MusicServiceMauiClient.Services
     {
         private readonly HttpClient _httpClient = new();
         private readonly string BaseUrl = $"https://{TunnelUrlData.Url}/";
+        private IEnumerable<string>? _roles;
         private string? _authToken;
         private string? _email;
-        private IEnumerable<string>? _roles;
 
         public async Task<string> LoginAsync(LoginDTO loginModel)
         {

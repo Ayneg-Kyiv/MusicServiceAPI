@@ -14,7 +14,7 @@
 
     <div class="authors-list">
        
-      <NavLink class="nav-link" href="./add-author" Match="NavLinkMatch.All">Add author</NavLink>
+      <NavLink class="nav-link add-button" href="./add-author" Match="NavLinkMatch.All">Add author</NavLink>
  
         <ul>
             @if (authors != null)
@@ -23,8 +23,10 @@
                 {
                     <li @onclick="() => SelectAuthor(author)" class="author-item">
                         <img src="@author.ImageUrl" alt="^_^" />
-                        <h4>@author.Name</h4>
-                        <button value="@author.Id" id="deleteButton" @onclick="(() => DeleteAuthor(author.Id))">Delete</button>
+                        <div class="action-group">
+                            <h4>@author.Name</h4>
+                            <button value="@author.Id" id="deleteButton" @onclick="(() => DeleteAuthor(author.Id))">Delete</button>
+                        </div>
                     </li>
                 }
             }
@@ -109,14 +111,17 @@
 
     .author-item {
         display: flex;
+        background-color: silver;
         flex-direction: row;
-        justify-content: space-between;
-        align-content: space-between;
+        border-radius: 20px;
         padding: 10px;
+        height: 120px;
         cursor: pointer;
+        justify-content: space-between;
         transition: background-color 0.3s ease;
         border-bottom: 1px solid #ddd;
         list-style-type: none;
+        margin-top: 10px
     }
 
         .author-item > img {
@@ -125,7 +130,7 @@
         }
 
         .author-item:hover {
-            background-color: #ffb6c1;
+            background-color: darkgrey;
         }
 
         .author-item.active {
@@ -144,6 +149,15 @@
             justify-content: space-between;
             align-items: center;
         }
+
+    .add-button{
+        padding: 20px;
+        background-color: mediumpurple;
+        text-align: center;
+        font-size: larger;
+        border-radius: 20px;
+        color: darkblue;
+    }
 
     button, .deleteButton {
         background-color: #4caf50;
@@ -188,6 +202,13 @@
     h2 {
         font-size: 1.2rem;
         margin: 10px 0;
+    }
+
+    .action-group{
+        display:flex;
+        flex-direction: column;
+        width: 70%;
+        justify-content: space-evenly;
     }
 
 </style>
