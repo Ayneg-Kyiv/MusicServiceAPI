@@ -1,6 +1,4 @@
-﻿@page "/authors-dashboard"
-
-@using MusicServiceMauiClient.DTOs.AuthorDTOs;
+﻿@using MusicServiceMauiClient.DTOs.AuthorDTOs;
 @using MusicServiceMauiClient.DTOs.MelodyDTOs
 @using Constants;
 @using Services;
@@ -225,7 +223,8 @@
     private void Select()
     {
         if (Layout.MainLayout.selectedGenre != null)
-            selectedMelodies = melodies?.Where(m => Layout.MainLayout.selectedGenre!.Melodies!.Any(g => g.Id == m.Id)).ToList();
+            selectedMelodies = melodies?.Where(m => Layout.MainLayout.selectedGenre!.Melodies!
+                                        .Any(g => g.Id == m.Id)).ToList();
         else
             selectedMelodies = melodies;
     }
@@ -234,7 +233,7 @@
         var result = await author.DeleteAuthorAsync(id);
 
         if(result)
-            Navigation.NavigateTo("/authors-dashboard");
+            Navigation.NavigateTo("/dashboard");
     }
 
     private async Task DeleteMelody(Guid id)
@@ -242,7 +241,7 @@
         var result = await music.DeleteMelodyAsync(id);
 
         if (result)
-            Navigation.NavigateTo("/authors-dashboard");       
+            Navigation.NavigateTo("/dashboard");       
     }
 
     private string GetActiveClass(GetAuthorDTO author) =>

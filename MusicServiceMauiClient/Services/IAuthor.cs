@@ -5,6 +5,5 @@ namespace MusicServiceMauiClient.Services
     {
         public Task<IEnumerable<GetAuthorDTO>> GetAuthorsAsync();
         public Task<bool> DeleteAuthorAsync(Guid guid);
-        public Task<GetAuthorDTO> AddAuthorAsync(CreateAuthorDTO author);
     }
 }

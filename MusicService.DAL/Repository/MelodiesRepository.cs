@@ -102,6 +102,7 @@ namespace MusicService.DAL.Repository
             }
 
             var melodyFilePath = melody.LocalPath;
+            var imageName = melody.ImageFileName;
             var imageFilePath = melody.ImageLocalPath;
 
             _context.Melodies.Remove(melody);
@@ -116,7 +117,8 @@ namespace MusicService.DAL.Repository
             }
 
             FileOperations.DeleteFile(melodyFilePath);
-            FileOperations.DeleteFile(imageFilePath);
+            if(imageName != "Default.png")
+                FileOperations.DeleteFile(imageFilePath);
 
             return Response;
         }
