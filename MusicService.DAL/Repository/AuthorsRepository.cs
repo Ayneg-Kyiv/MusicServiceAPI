@@ -82,6 +82,7 @@ namespace MusicService.DAL.Repository
                 return Response;
             }
 
+            var fileName = author.ImageFileName;
             var filePath = author.ImageLocalPath;
 
             _context.Authors.Remove(author);
@@ -96,7 +97,9 @@ namespace MusicService.DAL.Repository
                 return Response;
             }
 
-            FileOperations.DeleteFile(filePath);
+            if(fileName != "Default.png")
+                FileOperations.DeleteFile(filePath);
+
             return Response;
         }
 

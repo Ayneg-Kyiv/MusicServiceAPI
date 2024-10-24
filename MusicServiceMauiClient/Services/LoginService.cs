@@ -16,27 +16,45 @@ namespace MusicServiceMauiClient.Services
 
         public async Task<string> LoginAsync(LoginDTO loginModel)
         {
-            var dataUrl = $"{BaseUrl}api/Account/Login";
-            var jsonContent = JsonConvert.SerializeObject(loginModel);
-            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync(dataUrl, content);
-            var responseString = await response.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject<ResponseDTO>(responseString); 
-            var userData = JsonConvert.DeserializeObject<TokenReturn>(data.Result.ToString());
-            var token = userData.Token;
-            var roles = userData.Roles;
-
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                _authToken = token;
-                _email = loginModel.Email;
-                _roles = roles;
+                var dataUrl = $"{BaseUrl}api/Account/Login";
 
-                return "token";
+                var jsonContent = JsonConvert.SerializeObject(loginModel);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(dataUrl, content);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                var data = JsonConvert.DeserializeObject<ResponseDTO>(responseString);
+
+                if (data == null)
+                    return string.Empty;
+
+                var userData = JsonConvert.DeserializeObject<TokenReturn>
+                                            (data.Result?.ToString() ?? "");
+
+                if (userData == null)
+                    return string.Empty;
+
+                var token = userData.Token;
+                var roles = userData.Roles;
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _authToken = token;
+                    _email = loginModel.Email;
+                    _roles = roles;
+
+                    return "token";
+                }
+                else
+                    return string.Empty;
             }
-            else
+            catch (Exception ex)
+            {
                 return string.Empty;
+            }
         }
 
         public bool IsLoggedIn() => !string.IsNullOrEmpty(_authToken);

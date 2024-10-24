@@ -6,7 +6,6 @@ namespace MusicServiceMauiClient.Services
     {
         public Task<IEnumerable<GetMelodyDTO>> GetMusicAsync();
         public Task<bool> DeleteMelodyAsync(Guid guid);
-        public Task<GetMelodyDTO> AddMelodyAsync(CreateMelodyDTO melody);
 
     }
 }
