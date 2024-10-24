@@ -1,5 +1,44 @@
-﻿<h3>AddGenre</h3>
+﻿@page "/add-genre"
+
+@using DTOs.GenreDTOs;
+@using Services
+@using Constants
+
+@inject ILogin login
+@inject IJSRuntime js
+@inject NavigationManager Navigation
+
+<div class="my-container">
+
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input id="name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="about">About author:</label>
+        <input id="about" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="about">File:</label>
+        <input id="imageFile" type="file" class="form-control" />
+    </div>
+
+    <button id="add-button" class="btn btn-primary" @onclick="(() => Handle())">Create Author</button>
+
+    <div class="alert alert-danger wrong-data"></div>
+</div>
 
 @code {
 
+    private async Task Handle()
+    {
+
+        var result = await js.InvokeAsync<bool>("JavaSc", TunnelUrlData.Url, login.GetToken());
+        if (result)
+        {
+            Navigation.NavigateTo("/authors-dashboard");
+        }
+    }
 }
