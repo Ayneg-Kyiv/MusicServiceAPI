@@ -20,9 +20,9 @@ namespace MusicService.API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Policy = "RoleAuthor, RoleAdmin")]
-        public async Task<IActionResult> DeleteMelodyAsync([FromRoute] Guid id)
+        [HttpDelete]
+        [Authorize(Policy = "RoleAuthor")]
+        public async Task<IActionResult> DeleteMelodyAsync([FromHeader] Guid id)
         {
             var result = await sender.Send(new DeleteMelodyCommand(id));
 

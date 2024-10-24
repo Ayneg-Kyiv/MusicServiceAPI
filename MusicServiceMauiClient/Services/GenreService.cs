@@ -2,16 +2,13 @@
 using MusicServiceMauiClient.DTOs.GenreDTOs;
 using MusicServiceMauiClient.Models;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
-using System.Text;
 
 namespace MusicServiceMauiClient.Services
 {
-    public class GenreService : IGenre
+    public class GenreService(ILogin login) : IGenre
     {
         private readonly HttpClient _httpClient = new();
         private readonly string BaseUrl = $"https://{TunnelUrlData.Url}/";
-        private readonly ILogin _login;
 
         public async Task<IEnumerable<GetGenreDTO>> GetGenresAsync()
         {
@@ -25,44 +22,33 @@ namespace MusicServiceMauiClient.Services
                 (data?.Result?.ToString() ?? "") ?? [];
         }
 
-        private void SetAuthorizationHeader()
-        {
-            var token = _login.GetToken(); 
-            if (!string.IsNullOrEmpty(token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-        }
-
-        public GenreService(ILogin login)
-        {
-            _login = login; 
-            SetAuthorizationHeader(); 
-        }
-
-        public async Task<HttpResponseMessage> AddGenreAsync(CreateGenreDTO newGenre)
-        {
-            var dataUrl = "api/Genre";
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(newGenre), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(BaseUrl + dataUrl, jsonContent);
-
-            return response;
-        }
-
         public async Task<bool> DeleteGenreAsync(Guid guid)
         {
-            var dataUrl = $"api/Genre";
-            var token = _login.GetToken();
+            try
+            {
+                var dataUrl = $"api/Genre";
+                var token = login.GetToken();
 
-            _httpClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
-            _httpClient.DefaultRequestHeaders.Add("id", guid.ToString());
+                _httpClient.DefaultRequestHeaders.Clear();
 
+                _httpClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
+                _httpClient.DefaultRequestHeaders.Add("id", guid.ToString());
 
-            var response = await _httpClient.DeleteAsync(BaseUrl + dataUrl);
+                var response = await _httpClient.DeleteAsync(BaseUrl + dataUrl);
 
-            var content = await response.Content.ReadAsStringAsync();
-            var data = JsonConvert.DeserializeObject<ResponseDTO>(content);
-            return data!.IsSuccess;
+                var content = await response.Content.ReadAsStringAsync();
+
+                var data = JsonConvert.DeserializeObject<ResponseDTO>(content);
+
+                if (data == null)
+                    return false;
+
+                return data!.IsSuccess;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

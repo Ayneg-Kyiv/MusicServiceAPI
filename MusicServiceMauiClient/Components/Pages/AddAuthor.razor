@@ -9,15 +9,14 @@
 @inject NavigationManager Navigation
 
 <div class="my-container">
-   
        <div class="form-group">
             <label for="name">Name:</label>
-            <input id="name" class="form-control" />
+            <input id="name" class="form-control" required min="2"/>
         </div>
 
         <div class="form-group">
             <label for="about">About author:</label>
-            <input id="about" class="form-control" />
+            <input id="about" class="form-control" required min="20"/>
         </div>
 
         <div class="form-group">
@@ -25,10 +24,44 @@
             <input id="imageFile" type="file" class="form-control" />
         </div>
 
-        <button id="add-button" class="btn btn-primary" @onclick="(() => Handle())">Create Author</button>
+        <div class="form-group">
+            <button id="add-button" class="add-button" @onclick="(() => Handle())">Create Author</button>
+        </div>
    
     <div class="alert alert-danger wrong-data"></div>
 </div>
+
+<style>
+
+    .my-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex-wrap: wrap;
+        align-content: center;
+        padding-top: 4%;
+        padding-bottom: 10%;
+        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
+        align-items: flex-start;
+    }
+
+    .form-group{
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+
+    }
+
+    .add-button{
+        padding: 20px;
+        background-color: mediumpurple;
+        border-radius: 20px;
+    }
+
+
+</style>
 
 @code{
 
@@ -38,7 +71,7 @@
         var result = await js.InvokeAsync<bool>("JavaSc", TunnelUrlData.Url, login.GetToken());
         if(result)
         {
-            Navigation.NavigateTo("/authors-dashboard");
+            Navigation.NavigateTo("/dashboard");
         }
     }
 }
