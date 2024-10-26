@@ -5,10 +5,13 @@
 @inject IJSRuntime js
 
 <div class="player-control-panel">
+
     <div class="image-panel ">
         <img class="img-fluid active-melody" src="/img/placeholder.jpg" />
     </div>
+
     <div class="controls">
+
         <div class="info">
             <p class="info melody-title">Title</p>
             <p class="info author-name">Author</p>
@@ -20,7 +23,8 @@
         </div>
 
         <div class="melody-control">
-            <span id="current-time-span">00:00</span>
+
+            <span id="current-time-span">0:00</span>
 
             <button class="my-audio-control-button" @onclick="prevSong">
                 <img src="/img/prev.png" />
@@ -34,12 +38,16 @@
                 <img src="/img/next.png" />
             </button>
 
-            <span id="target-time-span">00:00</span>
+            <span id="target-time-span">0:00</span>
+
         </div>
+
     </div>
+
 </div>
 
 <style type="text/css">
+
     .player-control-panel {
         visibility: hidden;
         position: fixed;
@@ -51,11 +59,9 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        background-color: silver;
-        opacity: 60%;
+        background-color: rgba(169,169,169, 0.8);
         border-radius: 10px 10px 0px 0px;
     }
-
     
     .image-panel{
         flex-basis: 14%;
@@ -65,12 +71,15 @@
         justify-content: center;
         align-self: stretch;
     }
+
     .img-fluid{
         border-radius: 10px;
     }
+
     .img-panel{
         border-radius: 10px;
     }
+
     .controls{
         flex: 1 1 auto;
         display: flex;
@@ -124,7 +133,8 @@
         border: 0;
         background-color: inherit;
     }
-  
+
+    <!-- @@ to mask media for razor -->
     @@media screen and (max-width: 960px) {
         .player-control-panel {
             left: 10%;
@@ -147,19 +157,27 @@
             display: none;
         }
     }
+
 </style>
 
 @code {
+
     private async void nextSong()
     {
         var melody = await js.InvokeAsync<GetMelodyDTO>("getNext");
+
+        //If call it with await it will crash js compiler idk why ^_^
         js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melody]);
     }
+
     private async void prevSong()
     {
         var melody = await js.InvokeAsync<GetMelodyDTO>("getPrevious");
+
+        //the same
         js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melody]);
     }
+
     private void pausePlay()
     {
         js.InvokeVoidAsync("changeState");

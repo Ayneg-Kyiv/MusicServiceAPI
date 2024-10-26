@@ -1,6 +1,4 @@
-﻿@page "/add-melody"
-@page "/add-melody/{authorId:Guid}"
-
+﻿@page "/add-melody/{authorId:Guid}"
 
 @using DTOs.MelodyDTOs;
 @using Services
@@ -10,30 +8,31 @@
 @inject IJSRuntime js
 @inject NavigationManager Navigation
 
-
 <div class="my-container">
-<div class="form-group">
-    <label for="title">Title:</label>
-    <input id="title" class="form-control" required min="2" />
-    <input value="@authorId" style="visibility:hidden" id="authorId"/>
-</div>
+    <div class="form-group">
+        <label for="title">Title:</label>
+        <input id="title" class="form-control" required min="2" />
+        <input value="@authorId" style="visibility:hidden" id="authorId" required/>
+    </div>
+    
+    <div class="form-group">
+        <label for="duration">Duration:</label>
+        <input id="duration" type="number" class="form-control" required min="20" />
+    </div>
+    
+    <div class="form-group">
+        <label for="audioFile">Audio File:</label>
+        <input id="audioFile" type="file" class="form-control" required/>
+    </div>
 
-<div class="form-group">
-    <label for="duration">Duration:</label>
-    <input id="duration" type="number" class="form-control" required min="20" />
-</div>
+    <div class="form-group">
+        <label for="imageFile">File:</label>
+        <input id="imageFile" type="file" class="form-control" />
+    </div>
 
-<div class="form-group">
-    <label for="audioFile">Audio File:</label>
-    <input id="audioFile" type="file" class="form-control" />
-</div>
-<div class="form-group">
-    <label for="imageFile">File:</label>
-    <input id="imageFile" type="file" class="form-control" />
-</div>
- <div class="form-group">
-            <button id="add-button" class="add-button" @onclick="(() => Handle())">Create Melody</button>
-        </div>
+     <div class="form-group">
+        <button id="add-button" class="add-button" @onclick="(() => Handle())">Create Melody</button>
+     </div>
 </div>
 <style>
 
@@ -69,11 +68,12 @@
 </style>
 
 @code {
+
     [Parameter]
-    public string authorId { get; set; }
+    public string authorId { get; set; } = string.Empty;
+
     private async Task Handle()
     {
-
         var result = await js.InvokeAsync<bool>("AddMelody", TunnelUrlData.Url, login.GetToken());
         if (result)
         {

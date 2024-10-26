@@ -21,6 +21,16 @@ namespace MusicService.Infrastructure.FileOperations
             return (fileName, filePath);
         }
 
+        public static async Task<string> CopyFileAsync (string CurrentPath, string ContentRootPath,string WayPoint , string FileName)
+        {
+            string filePath = Path.Combine(ContentRootPath, WayPoint, FileName);
+
+            if (!System.IO.File.Exists(filePath))
+                File.Copy(CurrentPath, filePath);
+
+            return filePath;
+        }
+
         public static void DeleteFile( string filePath )
         {
             if (System.IO.File.Exists(filePath))

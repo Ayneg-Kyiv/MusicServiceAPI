@@ -51,7 +51,7 @@ namespace MusicServiceMauiClient.Services
                 else
                     return string.Empty;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return string.Empty;
             }

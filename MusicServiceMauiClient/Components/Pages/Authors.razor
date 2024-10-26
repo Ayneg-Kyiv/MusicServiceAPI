@@ -1,4 +1,6 @@
-﻿@page "/authors"
+﻿@implements IDisposable
+
+@page "/authors"
 
 @using MusicServiceMauiClient.DTOs.AuthorDTOs;
 @using MusicServiceMauiClient.DTOs.MelodyDTOs
@@ -7,8 +9,8 @@
 @using Models;
 
 @inject IAuthor author
-@inject IMusic music
 @inject IJSRuntime js
+@inject IMusic music
 
 <div class="my-container">
 
@@ -19,7 +21,7 @@
                 @foreach (var author in authors)
                 {
                     <li @onclick="() => SelectAuthor(author.Melodies!)" class="author-item">
-                        <img src="@author.ImageUrl" alt="^_^"/>
+                        <img class="author-image" src="@author.ImageUrl" alt="^_^"/>
                         <h1>@author.Name</h1>
                     </li>
                 }
@@ -30,30 +32,29 @@
     <div class="songs-list">
         @if (selectedAuthor != null)
         {
-            <h4>@selectedAuthor.Name Melodies</h4>
-            <div class="row">
                 @if (selectedMelodies != null)
                 {
                     @foreach (var melody in selectedMelodies)
                     {
-                        <div class="col-md-2">
+                    <div class="music-item">
 
-                            <div class="card">
+                        <div class="card">
 
-                                <img class="card-img" src="@melody.ImageUrl" />
+                            <img class="card-img" src="@melody.ImageUrl" />
+                            <div>
                                 <h2>@melody.Title</h2>
-                                <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
-
                             </div>
+                            <button value="@melody.Id" id="playButton" class="play-button" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
 
                         </div>
+
+                    </div>
                     }
                 }
                 else
                 {
                     <div>Loading...</div>
                 }
-            </div>
         }
         else
         {
@@ -66,23 +67,27 @@
 <style>
 
     .my-container {
-        padding-top: 1%;
+        padding-top: 5%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
-        width: 100%;        
+        width: 100%;    
+        height: 100vh;
     }
 
     .authors-list {
         width: 30%;
-        background-color: #ffcccb; 
+        background-color: #ffcccb;
         padding: 5px;
+        padding-bottom: 9%;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border: 1px solid black;
         margin-left: 10px;
         margin-bottom: 10px;
+        height: 100%;
+        overflow-y: scroll;
     }
 
         .authors-list > ul{
@@ -98,10 +103,21 @@
         border: 1px solid black;
         margin-right: 10px;
         margin-bottom: 10px;
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
         align-items: flex-start;
+        padding-bottom: 9%;
+        height: 100%;
+        overflow-y: scroll;
+    }
+
+    .music-item {
+        width: 100%;
+        padding-inline: 1%;
+        padding-top: 10px;
+        height: auto;
+        text-overflow: ellipsis;
     }
 
     .author-item {
@@ -117,6 +133,7 @@
     }
         .author-item > img{
             width: 100px;
+            height: 100px;
             border-radius: 10px;
         }
 
@@ -129,19 +146,7 @@
             color: white;
         }
 
-    .songs-list ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-        .songs-list ul li {
-            padding: 0px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-    button {
+    .play-button {
         background-color: #4caf50; 
         color: white;
         border: none;
@@ -151,17 +156,13 @@
         transition: background-color 0.3s ease;
     }
 
-        button:hover {
+        .play-button:hover {
             background-color: #45a049; 
         }
 
-        button:focus {
+        .play-button:focus {
             outline: none;
         }
-
-    .col-md-2 {
-        flex: 1 1 auto;
-    }
 
     .card {
         margin: 15px;
@@ -170,6 +171,11 @@
         overflow: hidden;
         text-align: center;
     }
+
+        .card > div {
+            height: 60px;
+            text-overflow: ellipsis;
+        }
 
     .card-img {
         width: 100%;
@@ -191,15 +197,17 @@
     private IEnumerable<GetUnconnectedMelodyDTO>? melodies;
     private IEnumerable<GetUnconnectedMelodyDTO>? selectedMelodies;
 
+    private Timer timer;
+
     protected override async Task OnInitializedAsync()
     {
         authors = await author.GetAuthorsAsync();
 
-        var timer = new System.Threading.Timer((_) =>
+        timer = new System.Threading.Timer((_) =>
         {
             InvokeAsync(async () =>
             {
-                Select();
+                await Select();
                 StateHasChanged();
             });
         }, null, 0, 300);
@@ -212,11 +220,12 @@
         selectedAuthor = authors?.FirstOrDefault(a => a.Melodies == authorMelodies);
     }
 
-    private void Select()
+    private async Task Select()
     {
         if (Layout.MainLayout.selectedGenre != null)
         {
-            selectedMelodies = melodies.Where(m => Layout.MainLayout.selectedGenre.Melodies.Any(g => g.Id == m.Id)).ToList();
+            selectedMelodies = melodies?.Where(m => Layout.MainLayout.selectedGenre.Melodies!
+                                                    .Any(g => g.Id == m.Id)).ToList();
         }
         else
             selectedMelodies = melodies;
@@ -225,11 +234,32 @@
     private void SetCurrentMelody(Guid id)
     {
         js.InvokeVoidAsync("setPlaylist", [selectedMelodies, id]);
-        js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, selectedMelodies?.Where(m => m.Id == id).SingleOrDefault()]);
+
+        var selected = selectedMelodies?.Where(m => m.Id == id).SingleOrDefault();
+
+        if (selected != null)
+        {
+            var melody = new GetMelodyDTO()
+            {
+                Id = selected.Id,
+                Title = selected.Title,
+                Duration = selected.Duration,
+                ImageUrl = selected.ImageUrl,
+                Author = new() { Name = selectedAuthor?.Name ?? "" }
+            };
+
+            js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, melody]);
+        }
+
     }
 
     private string GetActiveClass(GetAuthorDTO author)
     {
         return selectedAuthor != null && selectedAuthor.Id == author.Id ? "active" : "";
+    }
+
+    public void Dispose()
+    {
+        timer.Dispose();
     }
 }

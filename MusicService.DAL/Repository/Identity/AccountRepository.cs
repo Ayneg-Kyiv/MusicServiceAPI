@@ -116,7 +116,7 @@ namespace MusicService.DAL.Repository.Identity
 
             await _userManager.AddToRoleAsync(user, "User");
             
-            if (!string.IsNullOrWhiteSpace(register.RoleName))
+            if (!string.IsNullOrWhiteSpace(register.RoleName) && register.RoleName != "Admin")
             {
                 if(!await _roleManager.RoleExistsAsync(register.RoleName))
                 {

@@ -1,0 +1,143 @@
+﻿@page "/promote-to-genre/{melodyId:Guid}"
+
+@using DTOs.GenreDTOs
+@using Constants
+@using Services
+
+@inject IGenre genre
+@inject IJSRuntime js
+@inject ILogin login
+
+<div class="my-container">
+    <div class="all-genres">
+
+        <ul>
+            @if (allGenres != null)
+            {
+                @foreach (var genre in allGenres)
+                {
+                    <li  class="genre-item">
+                        <div class="action-group">
+                            <h2>@genre.Name</h2>
+                            <button value="@genre.Id" id="deleteButton" class="delete-button" @onclick="(() => Promote(genre.Id))">Promote</button>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+    <div class="promoted-genres">
+
+        <ul>
+            @if (promotedGenres != null)
+            {
+                @foreach (var genre in promotedGenres)
+                {
+                    <li class="genre-item">
+                        <div class="action-group">
+                            <h2>@genre.Name</h2>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+
+    </div>
+</div>
+
+<style>
+
+    .my-container {
+        padding-top: 5%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
+        width: 100%;
+        height: 100vh;
+    }
+
+    .all-genres, .promoted-genres {
+        flex-basis: 45%;
+        background-color: #ffcccb;
+        padding: 5px;
+        border-radius: 5px;
+        padding-bottom: 9%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid black;
+        margin-left: 10px;
+        margin-bottom: 10px;
+        overflow-y: scroll;
+    }
+
+        .all-genres, .promoted-genres > ul {
+            padding: 0px;
+        }
+
+    .genre-item{
+        display: flex;
+        background-color: silver;
+        flex-direction: row;
+        border-radius: 20px;
+        padding: 10px;
+        height: 120px;
+        cursor: pointer;
+        justify-content: space-between;
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #ddd;
+        list-style-type: none;
+        margin-top: 10px
+    }
+
+    .delete-button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .delete-button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-button:focus {
+            outline: none;
+        }
+
+</style>
+
+@code {
+    [Parameter]
+    public string melodyId { get; set; } = string.Empty;
+
+    private List<GetGenreDTO>? allGenres;
+    private List<GetGenreDTO>? promotedGenres;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var getGenres = await genre.GetGenresAsync();
+
+        allGenres = getGenres.ToList();
+
+        promotedGenres = allGenres.Where(g => g.Melodies!.Any(m => m.Id.ToString() == melodyId)).ToList();
+
+        foreach (var genre in promotedGenres)
+            allGenres.Remove(genre);
+    }
+
+    private async Task Promote(Guid genreId)
+    {
+        var result = await js.InvokeAsync<bool>("PromoteToGenre", [TunnelUrlData.Url, login.GetToken(), melodyId, genreId]);
+
+        if(result)
+        {
+            promotedGenres?.Add(allGenres?.Where(g => g.Id == genreId).FirstOrDefault() ?? new());
+            allGenres?.Remove(allGenres.Where(g => g.Id == genreId).FirstOrDefault() ?? new());
+        }
+
+        StateHasChanged();
+    }
+}

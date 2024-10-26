@@ -6,28 +6,41 @@
 @inject IAuthorization authorizationService
 
 <div class="dashboard">
+
+    <div class="welcoming-container">
+
+        <h1>Welcome to our music player!</h1>
+        <h3>We are glad you logged in, thanks for support!</h3>
+        <h4>Developers: Genya Shabelniy(Ayneg_Kyiv) and Zaitsev Maksym(Max)</h4>
+        <h5>Please, be patient, new cool updates coming soon!</h5>
+
+    </div>
+
     @if (authorizationService.DoesRoleExists("Author"))
-    {
-        <AuthorDashbord />
-    }
+    { <AuthorDashbord /> }
 
     @if (authorizationService.DoesRoleExists("Admin"))
-    {
-        <GenreDashboard />
-    }
+    { <GenreDashboard /> }
+
 </div>
 
 <style>
+
     .dashboard {
-        padding-top: 4%;
+        padding-top: 0%;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: space-between;
         width: 100%;
+        height: 100vh;
+        overflow-y: scroll;
+    }
+
+    .welcoming-container {
+        padding-top: 5%;
+        background-image: linear-gradient( rgba(0, 0, 255, 1), rgba(0, 0, 255, 0.5));
+        text-align: center;
+        color: silver;
     }
     
 </style>
-
-@code {
-
-}

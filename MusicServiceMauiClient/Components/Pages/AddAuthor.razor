@@ -68,8 +68,8 @@
 
     private async Task Handle()
     {
-
         var result = await js.InvokeAsync<bool>("AddAuthor", TunnelUrlData.Url, login.GetToken());
+
         if(result)
         {
             Navigation.NavigateTo("/dashboard");
