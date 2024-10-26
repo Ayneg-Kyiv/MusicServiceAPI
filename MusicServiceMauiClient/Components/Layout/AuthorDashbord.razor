@@ -1,8 +1,10 @@
-﻿@using MusicServiceMauiClient.DTOs.AuthorDTOs;
+﻿@implements IDisposable
+
+@using MusicServiceMauiClient.DTOs.AuthorDTOs
 @using MusicServiceMauiClient.DTOs.MelodyDTOs
-@using Constants;
-@using Services;
-@using Models;
+@using Constants
+@using Services
+@using Models
 
 @inject IAuthorization authorizationService
 @inject NavigationManager Navigation
@@ -25,7 +27,10 @@
                         <img src="@author.ImageUrl" alt="^_^" />
                         <div class="action-group">
                             <h4>@author.Name</h4>
-                            <button value="@author.Id" id="deleteButton" @onclick="(() => DeleteAuthor(author.Id))">Delete</button>
+                            @if(author.Melodies?.Count() == 0)
+                            {
+                                <button value="@author.Id" id="deleteButton" @onclick="(() => DeleteAuthor(author.Id))">Delete</button>
+                            }
                         </div>
                     </li>
                 }
@@ -36,34 +41,37 @@
     <div class="songs-list">
         @if (selectedAuthor != null)
         {
-            <h4>@selectedAuthor.Name Melodies</h4>
-            <div class="row">
-                @if (selectedMelodies != null)
+
+            @if (selectedMelodies != null)
+            {
+
+                @foreach (var melody in selectedMelodies)
                 {
-                    @foreach (var melody in selectedMelodies)
-                    {
-                        <div class="col-md-2">
-                            <div class="card">
-                                <img class="card-img" src="@melody.ImageUrl" />
-                                <h4>@melody.Title</h4>
-                                <button value="@melody.Id" id="deleteButton" @onclick="(() => DeleteMelody(melody.Id))">Delete</button>
-                            </div>
-                        </div>
-                    }
-                    <div class="col-md-2">
+                    <div class="music-item">
                         <div class="card">
-                            <a id="addButton" href="/add-melody/@selectedAuthor.Id">Add Melody</a>
+                            <img class="card-img img-fluid" src="@melody.ImageUrl" />
+                            <div>
+                                <h2>@melody.Title</h2>
+                            </div>
+                            <a id="addButton" class="delete-button" href="/promote-to-genre/@melody.Id">Add Genre</a>
+                            <button value="@melody.Id" id="deleteButton" class="delete-button" 
+                            style="margin-top: 10px" @onclick="(() => DeleteMelody(melody.Id))">Delete</button>
                         </div>
                     </div>
                 }
-                else{
-                    <div>Loading...</div>
-                }
-            </div>
+
+                <div class="music-item">
+                    <div class="card">
+                        <a id="addButton" class="add-button" style="border-radius: 0px;" 
+                        href="/add-melody/@selectedAuthor.Id">Add Melody</a>
+                    </div>
+                </div>
+
+            }
+            else{ <div>Loading...</div> }
+
         }
-        else{
-            <p>Please select an author to view their melodies.</p>
-        }
+        else{ <p>Please select an author to view their melodies.</p> }
     </div>
 
 </div>
@@ -71,23 +79,26 @@
 <style>
 
     .my-container {
-        padding-top: 4%;
+        padding-top: 5%;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
         width: 100%;
+        height: 100%;
     }
 
     .authors-list {
-        width: 30%;
+        flex-basis: 30%;
         background-color: #ffcccb;
         padding: 5px;
         border-radius: 5px;
+        padding-bottom: 9%;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border: 1px solid black;
         margin-left: 10px;
         margin-bottom: 10px;
+        overflow-y: scroll;
     }
 
         .authors-list > ul {
@@ -95,18 +106,28 @@
         }
 
     .songs-list {
-        width: 65%;
+        flex-basis: 68%;
         padding: 5px;
         border-radius: 5px;
-        background-color: #add8e6;
+        background-color: #ffcccb;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border: 1px solid black;
         margin-right: 10px;
         margin-bottom: 10px;
-        display: flex;
-        flex-direction: column;
+        padding-bottom: 9%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
         align-items: flex-start;
+        overflow-y: scroll;
+    }
+
+    .music-item{
+        width: 100%;
+        padding-inline: 1%;
+        padding-top: 10px;
+        height: auto;
+        text-overflow: ellipsis;
     }
 
     .author-item {
@@ -159,7 +180,7 @@
         color: darkblue;
     }
 
-    button, .deleteButton {
+    .delete-button {
         background-color: #4caf50;
         color: white;
         border: none;
@@ -169,21 +190,13 @@
         transition: background-color 0.3s ease;
     }
 
-        button:hover {
+        .delete-button:hover {
             background-color: #45a049;
         }
 
-        button:focus {
+        .delete-button:focus {
             outline: none;
         }
-
-    .deleteButton{
-        background-color: red;
-    }
-
-    .col-md-2 {
-        flex: 1 1 auto;
-    }
 
     .card {
         margin: 15px;
@@ -191,7 +204,13 @@
         border-radius: 10px;
         overflow: hidden;
         text-align: center;
+        flex: 1 1 auto;
     }
+
+        .card > div {
+            height: 60px;
+            text-overflow: ellipsis;
+        }
 
     .card-img {
         width: 100%;
@@ -217,14 +236,17 @@
 
     public GetAuthorDTO? selectedAuthor;
     private IEnumerable<GetAuthorDTO>? authors;
+
     private IEnumerable<GetUnconnectedMelodyDTO>? melodies;
     private IEnumerable<GetUnconnectedMelodyDTO>? selectedMelodies;
+
+    private Timer? timer;
 
     protected override async Task OnInitializedAsync()
     {
         authors = await author.GetAuthorsAsync();
 
-        var timer = new System.Threading.Timer((_) =>
+        timer = new System.Threading.Timer((_) =>
         {
             InvokeAsync(async () =>
             {
@@ -243,7 +265,7 @@
     private void Select()
     {
         if (Layout.MainLayout.selectedGenre != null)
-            selectedMelodies = melodies?.Where(m => Layout.MainLayout.selectedGenre!.Melodies!
+            selectedMelodies = melodies?.Where(m => Layout.MainLayout.selectedGenre.Melodies!
                                         .Any(g => g.Id == m.Id)).ToList();
         else
             selectedMelodies = melodies;
@@ -252,8 +274,14 @@
     private async Task DeleteAuthor(Guid id) {
         var result = await author.DeleteAuthorAsync(id);
 
-        if(result)
-            Navigation.NavigateTo("/dashboard");
+        if (result)
+        {
+            if (selectedAuthor == authors?.Where(a => a.Id == id).SingleOrDefault())
+                SelectAuthor(authors?.FirstOrDefault() ?? new());
+
+            authors = authors?.Where(a => a.Id != id).ToList();
+            StateHasChanged();
+        }
     }
 
     private async Task DeleteMelody(Guid id)
@@ -261,9 +289,20 @@
         var result = await music.DeleteMelodyAsync(id);
 
         if (result)
-            Navigation.NavigateTo("/dashboard");       
+        {
+            melodies = melodies!.Where(m => m.Id != id).ToList();
+            selectedMelodies = selectedMelodies!.Where(m => m.Id != id).ToList();
+            selectedAuthor!.Melodies = melodies;
+
+            StateHasChanged();
+        }
     }
 
     private string GetActiveClass(GetAuthorDTO author) =>
         selectedAuthor != null && selectedAuthor.Id == author.Id ? "active" : "";
+
+    public void Dispose()
+    {
+        timer.Dispose();
+    }
 }

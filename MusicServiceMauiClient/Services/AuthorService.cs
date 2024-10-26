@@ -36,7 +36,7 @@ namespace MusicServiceMauiClient.Services
 
                 return data.IsSuccess;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

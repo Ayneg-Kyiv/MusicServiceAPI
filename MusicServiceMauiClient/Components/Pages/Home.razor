@@ -1,9 +1,10 @@
+@implements IDisposable
+
 @page "/"
 
 @using Services;
 @using Constants;
 @using MusicServiceMauiClient.DTOs.MelodyDTOs;
-
 
 @inject IMusic music
 @inject IJSRuntime js
@@ -18,38 +19,43 @@
 }
 else
 {
-        <div class="row">
-            @foreach (var melody in selectedMelodies)
-            {
-                <div class="col-md-2">
-                    <div class="card">
-                        <img class="card-img" src="@melody.ImageUrl" />
-                        <h2>@melody.Title</h2>
-                        <button value="@melody.Id" id="playButton" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
-                    </div>
+    @foreach (var melody in selectedMelodies)
+    {
+            <div class="music-item">
+            <div class="card">
+                <img class="card-img" src="@melody.ImageUrl" />
+                <div>
+                    <h2>@melody.Title</h2>
                 </div>
-            }
+                <button value="@melody.Id" id="playButton" class="play-button" @onclick="(() => SetCurrentMelody(melody.Id))">Play</button>
+            </div>
         </div>
-
+    }
 }
-
 </div>
 
 <style>
 
     .my-container {
         width: 100%;
-        display: flex;
+        height: 100vh;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
         flex-direction: column;
         padding-inline: 4%;
         padding-top: 4%;
-        padding-bottom: 10%;
+        padding-bottom: 9%;
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
         align-items: flex-start;
+        overflow-y: scroll;
     }
 
-    .col-md-2{
-        flex: 1 1 auto;
+    .music-item {
+        width: 100%;
+        padding-inline: 1%;
+        padding-top: 10px;
+        height: auto;
+        text-overflow: ellipsis;
     }
 
     .card {
@@ -59,6 +65,11 @@ else
         overflow: hidden;
         text-align: center;
     }
+        
+        .card > div{
+            height: 60px;
+            text-overflow: ellipsis;
+        }
 
     .card-img {
         width: 100%;
@@ -71,7 +82,7 @@ else
         margin: 10px 0;
     }
 
-    button {
+    .play-button {
         background-color: #007bff;
         color: white;
         border: none;
@@ -82,7 +93,7 @@ else
         transition: background-color 0.3s ease;
     }
 
-    button:hover {
+    .play-button:hover {
         background-color: #0056b3;
     }
 
@@ -93,23 +104,25 @@ else
     private IEnumerable<GetMelodyDTO>? melodies;
     private IEnumerable<GetMelodyDTO>? selectedMelodies;
 
+    private Timer? timer;
+
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
 
         melodies = await music.GetMusicAsync();
 
-        var timer = new System.Threading.Timer((_) =>
+        timer = new System.Threading.Timer((_) =>
         {
             InvokeAsync(async () =>
             {
-                Select();
+                await Select();
                 StateHasChanged();
             });
         }, null, 0, 300); 
     }
 
-    private void Select()
+    private async Task Select()
     {
         if (Layout.MainLayout.selectedGenre != null)
         {
@@ -123,5 +136,10 @@ else
     {
         await js.InvokeVoidAsync("setPlaylist", [selectedMelodies, id]);
         js.InvokeVoidAsync("playMelody", [TunnelUrlData.Url, selectedMelodies?.Where(m => m.Id == id).SingleOrDefault()]);
+    }
+
+    public void Dispose()
+    {
+        timer.Dispose();
     }
 }

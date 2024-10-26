@@ -1,80 +1,85 @@
-﻿@using MusicServiceMauiClient.DTOs.GenreDTOs;
-@using MusicServiceMauiClient.DTOs.AlbumsDTO;
-@using Constants;
-@using Services;
-@using Models;
+﻿@implements IDisposable
 
-@inject IGenre genre
-@inject IMusic music
+@using MusicServiceMauiClient.DTOs.GenreDTOs
+@using MusicServiceMauiClient.DTOs.AlbumsDTO
+@using Constants
+@using Services
+@using Models
+
 @inject NavigationManager Navigation
 @inject IAuthorization authorization
+@inject IGenre genre
+@inject IMusic music
 
 <div class="my-container">
 
-      <div class="genres-list">
-       
-      <NavLink class="nav-link" href="./add-genre" Match="NavLinkMatch.All">Add genre</NavLink>
- 
-        <ul>
-            @if (genres != null)
+    <div class="genres-list">
+     
+    
+        @if (genres != null)
+        {
+            @foreach (var genre in genres)
             {
-                @foreach (var genre in genres)
-                {
-                    <li class="genre-item">
-                        <h4>@genre.Name</h4>
-                        <p>@genre.Description</p>
-                        <button value="@genre.Id" id="deleteButton" @onclick="(() => DeleteGenre(genre.Id))">Delete</button>
-                    </li>
-                }
+                <div class="genre-item">
+                    <h4>@genre.Name</h4>
+                    <p>@genre.Description</p>
+                    <button value="@genre.Id" id="deleteButton" class="delete-button" @onclick="(() => DeleteGenre(genre.Id))">Delete</button>
+                </div>
             }
-        </ul>
+            <div class="genre-item-last">
+                <NavLink class="nav-link add-button" href="/add-genre" Match="NavLinkMatch.All"><h1>ADD GENRE</h1></NavLink>
+            </div>
+        }
+
     </div>
+
 </div>
+
 <style>
     .my-container {
-        padding-top: 4%;
+        padding-top: 5%;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: space-between;
         background-image: linear-gradient( rgba(0, 0, 255, 0.5), rgba(255, 192, 203, 0.5));
         width: 100%;
+        height: 100%;
     }
 
     .genres-list {
-        width: 30%;
-        background-color: #f9f9f9;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
         padding: 15px;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         margin-right: 20px;
+        padding-bottom: 9%;
+        overflow-y: scroll;
     }
 
-    .albums-list {
-        width: 65%;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    .add-button {
+        padding: 20px;
+        height: 100%;
+        background-color: mediumpurple;
+        text-align: center;
+        font-size: larger;
+        border-radius: 20px;
+        color: darkblue;
+        display: flex;
+        justify-content: center;
+        align-content: center;
     }
 
-    .genres-list > a.add-genre {
-        display: inline-block;
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        text-decoration: none;
-        transition: background-color 0.3s;
-    }
-
-        .genres-list > a.add-genre:hover {
-            background-color: #45a049;
-        }
-
-    .genre-item {
+    .genre-item, .genre-item-last {
         padding: 10px;
+        margin: 10px;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         border-bottom: 1px solid #ddd;
+        background-color: whitesmoke;
         cursor: pointer;
         transition: background-color 0.3s;
     }
@@ -83,29 +88,28 @@
             background-color: #f1f1f1;
         }
 
+    .genre-item-last{
+        padding: 0px;
+    }
+
     .delete-button {
-        background-color: red;
+        background-color: #007bff;
         color: white;
-        border: none;
+        border-radius: 20px;
+        width: auto;
         padding: 5px 10px;
-        border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s;
         float: right;
     }
 
         .delete-button:hover {
-            background-color: darkred;
+            background-color: #0056b3;
         }
 
     .row {
         display: flex;
         flex-wrap: wrap;
-    }
-
-    .col-md-2 {
-        flex: 0 0 20%; 
-        padding: 10px;
     }
 
     .card {
@@ -135,33 +139,48 @@
 
 
 @code {
+
     private GetGenreDTO? selectedGenre;
     private IEnumerable<GetGenreDTO>? genres;
-  
-   
+
+    public static bool Changed { get; set; }
+
+    private Timer timer;
 
     protected override async Task OnInitializedAsync()
     {
+        Changed = true;
         genres = await genre.GetGenresAsync();
 
-        var timer = new System.Threading.Timer((_) =>
+        timer = new System.Threading.Timer((_) =>
         {
             InvokeAsync(async () =>
             {
-                genres = await genre.GetGenresAsync();
-                StateHasChanged();
+                if (Layout.GenreDashboard.Changed)
+                {
+                    genres = await genre.GetGenresAsync();
+                    Layout.GenreDashboard.Changed = false;
+                    StateHasChanged();
+                }
             });
-        }, null, 0, 300);
+        }, null, 0, 500);
     }
 
-   
     private async Task DeleteGenre(Guid id) {
         var result = await genre.DeleteGenreAsync(id);
 
-        if(result)
+        if (result)
+        {
+            Changed = true;
             Navigation.NavigateTo("/dashboard");
+        }
     }
 
     private string GetActiveClass(GetGenreDTO genre) =>
         selectedGenre != null && selectedGenre.Id == genre.Id ? "active" : "";
+
+    public void Dispose()
+    {
+        timer.Dispose();
+    }
 }

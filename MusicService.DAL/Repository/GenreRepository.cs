@@ -9,6 +9,7 @@ using MusicService.Core.Models.DTOs.AuthorDTOs;
 using MusicService.Core.Models.DTOs.GenreDTOs;
 using MusicService.Core.Models.DTOs.MelodyDTOs;
 using MusicService.DAL.Data;
+using System.Reflection.Metadata;
 
 
 namespace MusicService.DAL.Repository
@@ -70,16 +71,13 @@ namespace MusicService.DAL.Repository
             try
             {
                 var albums = await _context.GenreAlbums.Where(c => c.GenreId == genre.ID).ToListAsync();
-                foreach (var album in albums)
-                    _context.GenreAlbums.Remove(album);
+                _context.GenreAlbums.RemoveRange(albums);
 
-                var melodie = await _context.GenreMelodies.Where(c => c.GenreId == genre.ID).ToListAsync();
-                foreach (var melody in melodie)
-                    _context.GenreMelodies.Remove(melody);
+                var melodies = await _context.GenreMelodies.Where(c => c.GenreId == genre.ID).ToListAsync();
+                _context.GenreMelodies.RemoveRange(melodies);
 
                 var authors = await _context.GenreAuthors.Where(c => c.GenreId == genre.ID).ToListAsync();
-                foreach(var author in authors)
-                    _context.GenreAuthors.Remove(author);
+                _context.GenreAuthors.RemoveRange(authors);
             }
             catch (Exception ex)
             {

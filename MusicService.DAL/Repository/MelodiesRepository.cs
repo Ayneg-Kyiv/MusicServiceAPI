@@ -57,12 +57,15 @@ namespace MusicService.DAL.Repository
             else
             {
                     newMelody.ImageFileName = author.ImageFileName;
-                    newMelody.ImageLocalPath = author.ImageLocalPath;
+                    newMelody.ImageLocalPath = await FileOperations.CopyFileAsync(author.ImageLocalPath, 
+                                                                                  _environment.ContentRootPath,
+                                                                                  "Files/Melodies/Pictures",
+                                                                                  newMelody.ImageFileName);
             }
 
             if (melody.AudioFile != null)
             {
-                (string, string) nameAndPath= await FileOperations.SaveFileAsync(melody.AudioFile,
+                (string, string) nameAndPath = await FileOperations.SaveFileAsync(melody.AudioFile,
                                                _environment.ContentRootPath,
                                                "Files/Melodies/Audio");
 
@@ -101,11 +104,32 @@ namespace MusicService.DAL.Repository
                 return Response;
             }
 
+            var author = _context.Authors.Where(a => a.ID == melody.AuthorId).SingleOrDefault();
             var melodyFilePath = melody.LocalPath;
             var imageName = melody.ImageFileName;
             var imageFilePath = melody.ImageLocalPath;
 
+            try
+            {
+                var albums = await _context.AlbumMelodies.Where(a => a.MelodyId == melody.ID).ToListAsync();
+                _context.AlbumMelodies.RemoveRange(albums);
+
+                var genres = await _context.GenreMelodies.Where(a => a.MelodyId == melody.ID).ToListAsync();
+                _context.GenreMelodies.RemoveRange(genres);
+
+                var users = await _context.UserMelodies.Where(a => a.MelodyId == melody.ID).ToListAsync();
+                _context.UserMelodies.RemoveRange(users);
+            }
+            catch(Exception ex)
+            {
+                Response.IsSuccess = false;
+                Response.Message = "Error occured when object delete from database";
+
+                return Response;
+            }
+
             _context.Melodies.Remove(melody);
+
             var result = await _context.SaveChangesAsync();
 
             if (result <= 0)
@@ -117,6 +141,7 @@ namespace MusicService.DAL.Repository
             }
 
             FileOperations.DeleteFile(melodyFilePath);
+
             if(imageName != "Default.png")
                 FileOperations.DeleteFile(imageFilePath);
 

@@ -1,3 +1,5 @@
+@implements IDisposable
+
 @inherits LayoutComponentBase
 
 @using MusicServiceMauiClient.DTOs.GenreDTOs
@@ -10,33 +12,44 @@
 @inject IGenre genre
 
 <div class="wrapper">
+
     <div class="top-header">
+
          <div class="login-menu">
+
              @if (AuthorizationService.IsUserLoggedIn())
              {
-                 <NavLink class="identity-button" href="/dashboard" Match="NavLinkMatch.All"><div>Dashboard</div></NavLink>
-                 <button class="identity-button" @onclick="LogoutUser"><div>Logout</div></button>
+                <NavLink class="identity-button" href="/dashboard" Match="NavLinkMatch.All"><div>Dashboard</div></NavLink>
+                <button class="identity-button" @onclick="LogoutUser"><div>Logout</div></button>
              }
              else
              {
-                 <NavLink class="identity-button" href="/logins"><div>Login</div></NavLink>
-                 <NavLink class="identity-button" href="/register"><div>Sighin</div></NavLink>
+                <NavLink class="identity-button" href="/logins"><div>Login</div></NavLink>
+                <NavLink class="identity-button" href="/register"><div>Sighin</div></NavLink>
              }
+
          </div>
+
          <NavMenu />
+
          <div class="choice-genre">
+
             <div class="genre-button" @onclick="ToggleGenreMenu"><div>Genres</div></div>
+
             <div class="genre-menu" style="@(isGenreMenuVisible ? "display:block;" : "display:none;")">
+
                 <ul>
-                    <li id="0" @onclick="@(() => OnSelectedGenreChanged(Guid.Empty))">Any</li>
-                    @if(genres != null)
-                    @foreach(var genre in genres)
-                    {
-                        <li id="@genre.Id" @onclick="@(() => OnSelectedGenreChanged(genre.Id))">@genre.Name</li>
-                    }
+                    <div id="0" @onclick="@(() => OnSelectedGenreChanged(Guid.Empty))">Any</div>
+                        @foreach (var genre in genres ?? [])
+                        {
+                            <div id="@genre.Id" @onclick="@(() => OnSelectedGenreChanged(genre.Id))">@genre.Name</div>
+                        }
                 </ul>
+
             </div>
+
          </div>
+
     </div>
 
     <div class ="main-content">
@@ -153,21 +166,20 @@
         top: 6vh; 
     }
 
-
         .genre-menu ul {
             list-style: none;
             margin: 0;
             padding: 0;
         }
 
-            .genre-menu ul li {
+            .genre-menu ul div {
                 padding: 10px;
                 text-align: center;
                 cursor: pointer;
                 transition: background-color 0.3s ease;
             }
 
-                .genre-menu ul li:hover {
+                .genre-menu ul div:hover {
                     background-color: #f1f1f1;
                 }
 </style>
@@ -179,21 +191,25 @@
 
     public static GetGenreDTO? selectedGenre;
 
+    Timer? innerTimer;
+
     protected override async Task OnInitializedAsync()
     {
         await js.InvokeVoidAsync("onLoadAudio");
 
-       var timer = new System.Threading.Timer((_) =>
-       {
-           InvokeAsync(async () =>
-           {
-               genres = await genre.GetGenresAsync();
-               StateHasChanged();
-           });
-       }, null, 0, 1000);
-    }
+        genres = await genre.GetGenresAsync();
 
-   
+        innerTimer = new System.Threading.Timer((_) =>
+        {
+
+            InvokeAsync(async () =>
+            {
+                genres = await genre.GetGenresAsync();
+                StateHasChanged();
+            });
+
+        }, null, 0, 60000);
+    }
 
     private void ToggleGenreMenu() => isGenreMenuVisible = !isGenreMenuVisible;
 
@@ -202,14 +218,15 @@
         selectedGenre = genres?.Where(g => g.Id == id).SingleOrDefault();
         StateHasChanged();
     }
-    private void NavigateToLogin(){
-        Navigation.NavigateTo("/logins");
-    }
 
-    public void LogoutUser()
+    private void LogoutUser()
     {
         AuthorizationService.LogOut();
         Navigation.NavigateTo("/");
     }
 
+    public void Dispose()
+    {
+        innerTimer.Dispose();
+    }
 }
